@@ -6,6 +6,25 @@ GtkWidget *node_render(node_t *node) {
   case node_type_text: {
     return gtk_label_new_with_mnemonic((char *)node->data);
   }
+  case node_type_box: {
+    GtkWidget *box =
+        gtk_box_new(*(node_type_box_orientation_type_t *)node->data ==
+                            node_type_box_orientation_type_vertical
+                        ? GTK_ORIENTATION_VERTICAL
+                        : GTK_ORIENTATION_HORIZONTAL,
+                    0);
+
+    for (size_t i = 0; i < node->children->size; i++) {
+      node_t *child = node->children->items[i];
+      GtkWidget *widget = node_render(child);
+
+      if (widget) {
+        gtk_box_append(GTK_BOX(box), widget);
+      }
+    }
+
+    return box;
+  }
   case node_type_button: {
     GtkWidget *button = gtk_button_new();
 

@@ -3,9 +3,15 @@
 
 typedef enum node_type {
   node_type_window,
-  node_type_text,
-  node_type_button
+  node_type_box,
+  node_type_button,
+  node_type_text
 } node_type_t;
+
+typedef enum node_type_box_orientation_type {
+  node_type_box_orientation_type_horizontal,
+  node_type_box_orientation_type_vertical
+} node_type_box_orientation_type_t;
 
 typedef struct node {
   node_type_t type;
