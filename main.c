@@ -15,8 +15,8 @@ int main(void) {
   list_append(window->children, box);
   list_append(box->children, button);
   list_append(button->children, text);
-  node_run(window);
+  int status = node_run(window);
   node_destroy(window);
 
-  return 0;
+  return status;
 }
