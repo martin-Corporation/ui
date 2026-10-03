@@ -146,8 +146,14 @@ static void init_portal(GtkSettings *settings) {
 }
 
 static void activate(GtkApplication *app, gpointer user_data) {
+  GtkSettings *settings = gtk_settings_get_default();
   GtkWidget *window = gtk_application_window_new(app);
   node_t *node = user_data;
+  char *desktop = getenv("XDG_CURRENT_DESKTOP");
+
+  if (!(desktop && strstr(desktop, "GNOME"))) {
+    init_portal(settings);
+  }
 
   gtk_window_set_title(GTK_WINDOW(window), "Hello");
   gtk_window_set_default_size(GTK_WINDOW(window), 500, 250);
@@ -173,8 +179,6 @@ int node_run(node_t *node) {
     app = adw_application_new("org.gtk.example", G_APPLICATION_DEFAULT_FLAGS);
   } else {
     app = gtk_application_new("org.gtk.example", G_APPLICATION_DEFAULT_FLAGS);
-    GtkSettings *settings = gtk_settings_get_default();
-    init_portal(settings);
   }
 
   g_signal_connect(app, "activate", G_CALLBACK(activate), node);
