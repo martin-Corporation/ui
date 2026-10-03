@@ -47,9 +47,110 @@ GtkWidget *node_render(node_t *node) {
   return NULL;
 }
 
+typedef enum color_scheme {
+  color_scheme_default,
+  color_scheme_prefer_dark,
+  color_scheme_prefer_light
+} color_scheme_t;
+
+void set_color_scheme(GtkSettings *settings, GVariant *variant) {
+  color_scheme_t color_scheme = g_variant_get_uint32(variant);
+
+  if (color_scheme > color_scheme_prefer_light) {
+    color_scheme = color_scheme_default;
+  }
+
+  g_object_set(settings, "gtk-application-prefer-dark-theme",
+               color_scheme == color_scheme_prefer_dark, NULL);
+}
+
+void settings_portal_changed_cb(GDBusProxy *proxy, const char *sender_name,
+                                const char *signal_name, GVariant *parameters,
+                                GtkSettings *settings) {
+  (void)proxy;
+  (void)sender_name;
+
+  const char *namespace;
+  const char *name;
+  g_autoptr(GVariant) value = NULL;
+
+  if (g_strcmp0(signal_name, "SettingChanged")) {
+    return;
+  }
+
+  g_variant_get(parameters, "(&s&sv)", &namespace, &name, &value);
+
+  if (g_strcmp0(namespace, "org.freedesktop.appearance") ||
+      g_strcmp0(name, "color-scheme")) {
+    return;
+  }
+
+  set_color_scheme(settings, value);
+}
+
+static gboolean read_color_scheme(GDBusProxy *proxy, GVariant **out) {
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GVariant) ret = NULL;
+  g_autoptr(GVariant) child = NULL;
+
+  // TODO: use ReadOne instead
+  ret = g_dbus_proxy_call_sync(
+      proxy, "Read",
+      g_variant_new("(ss)", "org.freedesktop.appearance", "color-scheme"),
+      G_DBUS_CALL_FLAGS_NONE, G_MAXINT, NULL, &error);
+
+  if (error) {
+    if (error->domain == G_DBUS_ERROR &&
+        error->code == G_DBUS_ERROR_SERVICE_UNKNOWN) {
+      g_debug("Portal not found: %s", error->message);
+      return FALSE;
+    }
+
+    if (error->domain == G_DBUS_ERROR &&
+        error->code == G_DBUS_ERROR_UNKNOWN_METHOD) {
+      g_debug("Portal doesn't provide settings: %s", error->message);
+      return FALSE;
+    }
+
+    g_critical("Couldn't read the color-scheme setting: %s", error->message);
+    return FALSE;
+  }
+
+  g_variant_get(ret, "(v)", &child);
+  g_variant_get(child, "v", out);
+
+  return TRUE;
+}
+
+static void init_portal(GtkSettings *settings) {
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GVariant) value = NULL;
+
+  GDBusProxy *settings_portal = g_dbus_proxy_new_for_bus_sync(
+      G_BUS_TYPE_SESSION, G_DBUS_PROXY_FLAGS_NONE, NULL,
+      "org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop",
+      "org.freedesktop.portal.Settings", NULL, &error);
+
+  if (error) {
+    g_debug("Settings portal not found: %s", error->message);
+    return;
+  }
+
+  if (!read_color_scheme(settings_portal, &value)) {
+    return;
+  }
+
+  set_color_scheme(settings, value);
+  g_signal_connect(settings_portal, "g-signal",
+                   G_CALLBACK(settings_portal_changed_cb), settings);
+}
+
 static void activate(GtkApplication *app, gpointer user_data) {
-  node_t *node = user_data;
+  GtkSettings *settings = gtk_settings_get_default();
   GtkWidget *window = gtk_application_window_new(app);
+  node_t *node = user_data;
+
+  init_portal(settings);
   gtk_window_set_title(GTK_WINDOW(window), "Hello");
   gtk_window_set_default_size(GTK_WINDOW(window), 500, 250);
 
