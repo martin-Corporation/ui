@@ -146,8 +146,8 @@ static void init_portal(GtkSettings *settings) {
 }
 
 static void activate(GtkApplication *app, gpointer user_data) {
-  GtkSettings *settings = gtk_settings_get_default();
   GtkWidget *window = gtk_application_window_new(app);
+  GtkSettings *settings = gtk_settings_get_default();
   char *desktop = getenv("XDG_CURRENT_DESKTOP");
   node_t *node = user_data;
 
