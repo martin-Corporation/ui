@@ -28,6 +28,20 @@ GtkWidget *node_render(node_t *node) {
   case node_type_button: {
     GtkWidget *button = gtk_button_new();
 
+    switch (*(node_type_button_variant_type_t *)node->data) {
+    case node_type_button_variant_type_primary: {
+      gtk_widget_add_css_class(button, "suggested-action");
+      break;
+    }
+    case node_type_button_variant_type_destructive: {
+      gtk_widget_add_css_class(button, "destructive-action");
+      break;
+    }
+    default: {
+      break;
+    }
+    }
+
     for (size_t i = 0; i < node->children->size; i++) {
       node_t *child = node->children->items[i];
       GtkWidget *widget = node_render(child);

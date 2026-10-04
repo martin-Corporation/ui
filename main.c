@@ -9,7 +9,10 @@ int main(void) {
       node_type_box_orientation_type_vertical;
 
   node_t *box = node_initialize(node_type_box, &orientation);
-  node_t *button = node_initialize(node_type_button, NULL);
+  node_type_button_variant_type_t variant =
+      node_type_button_variant_type_primary;
+
+  node_t *button = node_initialize(node_type_button, &variant);
   node_t *text = node_initialize(node_type_text, "Button");
 
   list_append(window->children, box);

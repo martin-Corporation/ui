@@ -13,6 +13,12 @@ typedef enum node_type_box_orientation_type {
   node_type_box_orientation_type_vertical
 } node_type_box_orientation_type_t;
 
+typedef enum node_type_button_variant_type {
+  node_type_button_variant_type_primary,
+  node_type_button_variant_type_secondary,
+  node_type_button_variant_type_destructive
+} node_type_button_variant_type_t;
+
 typedef struct node {
   node_type_t type;
   void *data;
