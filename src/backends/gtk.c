@@ -105,11 +105,8 @@ void settings_portal_changed_cb(GDBusProxy *proxy, const char *sender_name,
 static gboolean read_color_scheme(GDBusProxy *proxy, GVariant **out) {
   g_autoptr(GError) error = NULL;
   g_autoptr(GVariant) ret = NULL;
-  g_autoptr(GVariant) child = NULL;
-
-  // TODO: use ReadOne instead
   ret = g_dbus_proxy_call_sync(
-      proxy, "Read",
+      proxy, "ReadOne",
       g_variant_new("(ss)", "org.freedesktop.appearance", "color-scheme"),
       G_DBUS_CALL_FLAGS_NONE, G_MAXINT, NULL, &error);
 
@@ -130,9 +127,7 @@ static gboolean read_color_scheme(GDBusProxy *proxy, GVariant **out) {
     return FALSE;
   }
 
-  g_variant_get(ret, "(v)", &child);
-  g_variant_get(child, "v", out);
-
+  g_variant_get(ret, "(v)", out);
   return TRUE;
 }
 
