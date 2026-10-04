@@ -7,9 +7,7 @@ project(
 )
 
 dependencies = [dependency('gtk4'), dependency('libadwaita-1')]
-
 sources = ['main.c', 'src/list.c', 'src/node.c', 'src/backends/gtk.c']
-
 include_directories = include_directories('src/include')
 
 executable(

@@ -134,7 +134,6 @@ static gboolean read_color_scheme(GDBusProxy *proxy, GVariant **out) {
 static void init_portal(GtkSettings *settings) {
   g_autoptr(GError) error = NULL;
   g_autoptr(GVariant) value = NULL;
-
   GDBusProxy *settings_portal = g_dbus_proxy_new_for_bus_sync(
       G_BUS_TYPE_SESSION, G_DBUS_PROXY_FLAGS_NONE, NULL,
       "org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop",
