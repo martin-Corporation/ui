@@ -1,2 +1,2 @@
 CompileFlags:
-  Add: -I/Volumes/Projects/ui/src/include
+  CompilationDatabase: build
