@@ -25,12 +25,12 @@ typedef struct node {
   list_t *children;
 } node_t;
 
-node_t *node_initialize(node_type_t type, void *data);
 #if defined(__cplusplus)
 extern "C" {
 #endif
+node_t *node_initialize(node_type_t type, void *data);
 int node_run(node_t *node, int argc, char **argv);
+void node_destroy(node_t *node);
 #if defined(__cplusplus)
 }
 #endif
-void node_destroy(node_t *node);
