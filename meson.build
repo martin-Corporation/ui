@@ -36,7 +36,7 @@ sources = [
   'src/backends/' + backend + '.' + backend_file_extension,
 ]
 
-include_directories = include_directories('src/include')
+include_directories = include_directories('include')
 
 executable(
   'ui',
