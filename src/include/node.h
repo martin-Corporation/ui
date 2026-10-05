@@ -26,5 +26,11 @@ typedef struct node {
 } node_t;
 
 node_t *node_initialize(node_type_t type, void *data);
+#if defined(__cplusplus)
+extern "C" {
+#endif
 int node_run(node_t *node, int argc, char **argv);
+#if defined(__cplusplus)
+}
+#endif
 void node_destroy(node_t *node);

@@ -184,9 +184,9 @@ int node_run(node_t *node, int argc, char **argv) {
   void *app;
 
   if (desktop && strstr(desktop, "GNOME")) {
-    app = adw_application_new("org.gtk.example", G_APPLICATION_DEFAULT_FLAGS);
+    app = adw_application_new(node->data, G_APPLICATION_DEFAULT_FLAGS);
   } else {
-    app = gtk_application_new("org.gtk.example", G_APPLICATION_DEFAULT_FLAGS);
+    app = gtk_application_new(node->data, G_APPLICATION_DEFAULT_FLAGS);
   }
 
   g_signal_connect(app, "activate", G_CALLBACK(activate), node);

@@ -70,6 +70,7 @@ extern "C" int node_run(node_t *node, int argc, char **argv) {
   QQuickWindow window;
   engine = &_engine;
 
+  app.setDesktopFileName(QString::fromUtf8((char *)node->data));
   window.setColor(app.palette().window().color());
   window.setWidth(500);
   window.setHeight(250);
