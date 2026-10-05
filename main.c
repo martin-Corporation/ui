@@ -9,12 +9,14 @@ int main(int argc, char **argv) {
   node_type_button_variant_type_t variant =
       node_type_button_variant_type_primary;
 
+  node_t *text = node_initialize(node_type_text, "Welcome to martinUI!");
   node_t *button = node_initialize(node_type_button, &variant);
-  node_t *text = node_initialize(node_type_text, "Button");
+  node_t *label = node_initialize(node_type_text, "Button");
 
   list_append(window->children, box);
+  list_append(box->children, text);
   list_append(box->children, button);
-  list_append(button->children, text);
+  list_append(button->children, label);
   int status = node_run(window, argc, argv);
   node_destroy(window);
 
