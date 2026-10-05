@@ -1,9 +1,6 @@
 #include <node.h>
 
-// Backend-provided function.
-int node_run(node_t *node);
-
-int main(void) {
+int main(int argc, char **argv) {
   node_t *window = node_initialize(node_type_window, NULL);
   node_type_box_orientation_type_t orientation =
       node_type_box_orientation_type_vertical;
@@ -18,7 +15,7 @@ int main(void) {
   list_append(window->children, box);
   list_append(box->children, button);
   list_append(button->children, text);
-  int status = node_run(window);
+  int status = node_run(window, argc, argv);
   node_destroy(window);
 
   return status;

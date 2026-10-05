@@ -178,7 +178,7 @@ static void activate(GtkApplication *app, gpointer user_data) {
   gtk_window_present(GTK_WINDOW(window));
 }
 
-int node_run(node_t *node) {
+int node_run(node_t *node, int argc, char **argv) {
   const char *desktop = g_getenv("XDG_CURRENT_DESKTOP");
   int status;
   void *app;
@@ -190,7 +190,7 @@ int node_run(node_t *node) {
   }
 
   g_signal_connect(app, "activate", G_CALLBACK(activate), node);
-  status = g_application_run(G_APPLICATION(app), 0, NULL);
+  status = g_application_run(G_APPLICATION(app), argc, argv);
   g_object_unref(app);
 
   return status;
