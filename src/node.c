@@ -1,6 +1,15 @@
 #include <node.h>
 #include <stdlib.h>
 
+node_t *node_type_button_initialize(char *label,
+                                    node_type_button_variant_type_t *variant) {
+  node_t *button = node_initialize(node_type_button, variant);
+  node_t *text = node_initialize(node_type_text, label);
+  list_append(button->children, text);
+
+  return button;
+}
+
 node_t *node_initialize(node_type_t type, void *data) {
   node_t *node = malloc(sizeof(node_t));
   node->type = type;

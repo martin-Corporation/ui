@@ -28,6 +28,8 @@ typedef struct node {
 #if defined(__cplusplus)
 extern "C" {
 #endif
+node_t *node_type_button_initialize(char *label,
+                                    node_type_button_variant_type_t *variant);
 node_t *node_initialize(node_type_t type, void *data);
 int node_run(node_t *node, int argc, char **argv);
 void node_destroy(node_t *node);
