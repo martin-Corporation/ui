@@ -26,9 +26,14 @@ GtkWidget *node_render(node_t *node) {
     return box;
   }
   case node_type_button: {
+    node_type_button_data_t *data = node->data;
     GtkWidget *button = gtk_button_new();
 
-    switch (*(node_type_button_variant_type_t *)node->data) {
+    if (data->clicked) {
+      g_signal_connect(button, "clicked", G_CALLBACK(data->clicked), node);
+    }
+
+    switch (data->variant) {
     case node_type_button_variant_type_primary: {
       gtk_widget_add_css_class(button, "suggested-action");
       break;

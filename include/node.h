@@ -19,6 +19,11 @@ typedef enum node_type_button_variant_type {
   node_type_button_variant_type_destructive
 } node_type_button_variant_type_t;
 
+typedef struct node_type_button_data {
+  void (*clicked)(void);
+  node_type_button_variant_type_t variant;
+} node_type_button_data_t;
+
 typedef struct node {
   node_type_t type;
   void *data;
@@ -29,7 +34,8 @@ typedef struct node {
 extern "C" {
 #endif
 node_t *node_type_button_initialize(char *label,
-                                    node_type_button_variant_type_t *variant);
+                                    node_type_button_variant_type_t variant,
+                                    void (*clicked)(void));
 node_t *node_initialize(node_type_t type, void *data);
 int node_run(node_t *node, int argc, char **argv);
 void node_destroy(node_t *node);

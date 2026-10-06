@@ -11,10 +11,15 @@ project(
 
 dependencies = []
 backend = get_option('ui_backend')
+sources = [
+  'main.c',
+  'src/list.c',
+  'src/node.c',
+]
 
 if backend == 'gtk'
   dependencies += [dependency('gtk4'), dependency('libadwaita-1')]
-  backend_file_extension = 'c'
+  sources += 'src/backends/gtk.c'
 elif backend == 'qt'
   dependencies += [
     dependency(
@@ -26,15 +31,14 @@ elif backend == 'qt'
   ]
 
   add_languages('cpp', native: true)
-  backend_file_extension = 'cpp'
+  sources += [
+    'src/backends/qt.cpp',
+    import('qt6').compile_moc(
+      sources: 'src/backends/qt.cpp',
+      dependencies: dependencies,
+    ),
+  ]
 endif
-
-sources = [
-  'main.c',
-  'src/list.c',
-  'src/node.c',
-  'src/backends/' + backend + '.' + backend_file_extension,
-]
 
 include_directories = include_directories('include')
 

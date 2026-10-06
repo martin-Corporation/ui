@@ -12,6 +12,24 @@ static QQuickItem *create_item(QQmlEngine *engine, const char *module,
   return qobject_cast<QQuickItem *>(object);
 }
 
+class NodeEventListener : public QObject {
+  Q_OBJECT
+
+public:
+  node_t *node;
+  explicit NodeEventListener(node_t *node, QObject *parent = nullptr)
+      : QObject(parent), node(node) {}
+
+public slots:
+  void handle() {
+    auto data = (node_type_button_data_t *)node->data;
+
+    if (data->clicked) {
+      data->clicked();
+    }
+  }
+};
+
 void node_render(node_t *node, QQuickItem *parent) {
   switch (node->type) {
   case node_type_box: {
@@ -30,11 +48,16 @@ void node_render(node_t *node, QQuickItem *parent) {
     break;
   }
   case node_type_button: {
-    auto data = *(node_type_button_variant_type_t *)node->data;
     auto button = create_item(engine, "QtQuick.Controls", "Button");
+    auto data = (node_type_button_data_t *)node->data;
     button->setParentItem(parent);
 
-    if (data == node_type_button_variant_type_primary) {
+    if (data->clicked) {
+      auto listener = new NodeEventListener(node, button);
+      QObject::connect(button, SIGNAL(clicked()), listener, SLOT(handle()));
+    }
+
+    if (data->variant == node_type_button_variant_type_primary) {
       button->setProperty("highlighted", true);
     }
 
@@ -82,3 +105,5 @@ extern "C" int node_run(node_t *node, int argc, char **argv) {
   window.show();
   return app.exec();
 }
+
+#include "qt.moc"

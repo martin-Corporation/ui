@@ -2,9 +2,13 @@
 #include <stdlib.h>
 
 node_t *node_type_button_initialize(char *label,
-                                    node_type_button_variant_type_t *variant) {
-  node_t *button = node_initialize(node_type_button, variant);
+                                    node_type_button_variant_type_t variant,
+                                    void (*clicked)(void)) {
+  node_type_button_data_t *data = malloc(sizeof(node_type_button_data_t));
+  node_t *button = node_initialize(node_type_button, data);
   node_t *text = node_initialize(node_type_text, label);
+  data->variant = variant;
+  data->clicked = clicked;
   list_append(button->children, text);
 
   return button;
@@ -23,6 +27,10 @@ void node_destroy(node_t *node) {
   for (size_t i = 0; i < node->children->size; i++) {
     node_t *child = node->children->items[i];
     node_destroy(child);
+  }
+
+  if (node->type == node_type_button) {
+    free(node->data);
   }
 
   free(node->children->items);
