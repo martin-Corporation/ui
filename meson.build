@@ -25,7 +25,7 @@ elif backend == 'qt'
     ),
   ]
 
-  add_languages('cpp')
+  add_languages('cpp', native: true)
   backend_file_extension = 'cpp'
 endif
 
