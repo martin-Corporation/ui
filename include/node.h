@@ -14,8 +14,8 @@ typedef enum node_type_box_orientation_type {
 } node_type_box_orientation_type_t;
 
 typedef struct node_type_box_data {
-  node_type_box_orientation_type_t orientation;
   size_t spacing;
+  node_type_box_orientation_type_t orientation;
 } node_type_box_data_t;
 
 typedef enum node_type_button_variant_type {
