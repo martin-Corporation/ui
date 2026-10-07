@@ -7,10 +7,8 @@ GtkWidget *node_render(node_t *node) {
       return gtk_label_new_with_mnemonic((char *)node->data);
     }
     case node_type_box: {
-      node_type_box_orientation_type_t data =
-          *(node_type_box_orientation_type_t *)node->data;
-
-      GtkWidget *box = gtk_box_new((GtkOrientation)data, 0);
+      GtkOrientation data = *(GtkOrientation *)node->data;
+      GtkWidget *box = gtk_box_new(data, 0);
 
       for (size_t i = 0; i < node->children->size; i++) {
         node_t *child = node->children->items[i];
