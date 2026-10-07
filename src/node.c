@@ -24,6 +24,16 @@ node_t *node_type_box_initialize(node_type_box_orientation_type_t orientation,
   return box;
 }
 
+node_t *node_type_window_initialize(char *id, size_t width, size_t height) {
+  node_type_window_data_t *data = malloc(sizeof(node_type_window_data_t));
+  node_t *window = node_initialize(node_type_window, data);
+  data->height = height;
+  data->width = width;
+  data->id = id;
+
+  return window;
+}
+
 node_t *node_initialize(node_type_t type, void *data) {
   node_t *node = malloc(sizeof(node_t));
   node->type = type;

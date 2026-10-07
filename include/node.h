@@ -8,6 +8,12 @@ typedef enum node_type {
   node_type_text
 } node_type_t;
 
+typedef struct node_type_window_data {
+  char *id;
+  size_t width;
+  size_t height;
+} node_type_window_data_t;
+
 typedef enum node_type_box_orientation_type {
   node_type_box_orientation_type_horizontal,
   node_type_box_orientation_type_vertical
@@ -43,6 +49,7 @@ node_t *node_type_button_initialize(char *label,
                                     void (*clicked)(void));
 node_t *node_type_box_initialize(node_type_box_orientation_type_t orientation,
                                  size_t spacing);
+node_t *node_type_window_initialize(char *id, size_t width, size_t height);
 int node_type_window_run(node_t *node, int argc, char **argv);
 node_t *node_initialize(node_type_t type, void *data);
 void node_destroy(node_t *node);

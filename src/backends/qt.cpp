@@ -91,18 +91,20 @@ void node_render(node_t *node, QQuickItem *parent) {
 }
 
 extern "C" int node_type_window_run(node_t *node, int argc, char **argv) {
+  auto data = (node_type_window_data_t *)node->data;
   QGuiApplication app(argc, argv);
   QQmlEngine _engine;
   QQuickWindow window;
   engine = &_engine;
 
-  app.setDesktopFileName(QString::fromUtf8((char *)node->data));
+  app.setDesktopFileName(QString::fromUtf8(data->id));
   window.setColor(app.palette().window().color());
-  window.setWidth(500);
-  window.setHeight(250);
+  window.setHeight(data->height);
+  window.setWidth(data->width);
 
   for (size_t i = 0; i < node->children->size; i++) {
-    node_render((node_t *)node->children->items[i], window.contentItem());
+    auto child = (node_t *)node->children->items[i];
+    node_render(child, window.contentItem());
   }
 
   window.show();

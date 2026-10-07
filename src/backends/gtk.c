@@ -160,13 +160,13 @@ static void activate(GtkApplication *app, gpointer user_data) {
   GtkWidget *window = gtk_application_window_new(app);
   GtkSettings *settings = gtk_settings_get_default();
   node_t *node = user_data;
+  node_type_window_data_t *data = node->data;
 
   if (!(desktop && strstr(desktop, "GNOME"))) {
     init_portal(settings);
   }
 
-  gtk_window_set_title(GTK_WINDOW(window), "Hello");
-  gtk_window_set_default_size(GTK_WINDOW(window), 500, 250);
+  gtk_window_set_default_size(GTK_WINDOW(window), data->width, data->height);
 
   for (size_t i = 0; i < node->children->size; i++) {
     node_t *child = node->children->items[i];
@@ -182,13 +182,14 @@ static void activate(GtkApplication *app, gpointer user_data) {
 
 int node_type_window_run(node_t *node, int argc, char **argv) {
   const char *desktop = g_getenv("XDG_CURRENT_DESKTOP");
+  node_type_window_data_t *data = node->data;
   int status;
   void *app;
 
   if (desktop && strstr(desktop, "GNOME")) {
-    app = adw_application_new(node->data, G_APPLICATION_DEFAULT_FLAGS);
+    app = adw_application_new(data->id, G_APPLICATION_DEFAULT_FLAGS);
   } else {
-    app = gtk_application_new(node->data, G_APPLICATION_DEFAULT_FLAGS);
+    app = gtk_application_new(data->id, G_APPLICATION_DEFAULT_FLAGS);
   }
 
   g_signal_connect(app, "activate", G_CALLBACK(activate), node);

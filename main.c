@@ -4,7 +4,7 @@
 void clicked(void) { puts("Hello, World!"); }
 
 int main(int argc, char **argv) {
-  node_t *window = node_initialize(node_type_window, "com.mrtn.demo");
+  node_t *window = node_type_window_initialize("com.mrtn.demo", 500, 250);
   node_t *box =
       node_type_box_initialize(node_type_box_orientation_type_vertical, 0);
 
