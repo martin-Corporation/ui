@@ -43,8 +43,8 @@ node_t *node_type_button_initialize(char *label,
                                     void (*clicked)(void));
 node_t *node_type_box_initialize(node_type_box_orientation_type_t orientation,
                                  size_t spacing);
+int node_type_window_run(node_t *node, int argc, char **argv);
 node_t *node_initialize(node_type_t type, void *data);
-int node_run(node_t *node, int argc, char **argv);
 void node_destroy(node_t *node);
 #if defined(__cplusplus)
 }

@@ -180,7 +180,7 @@ static void activate(GtkApplication *app, gpointer user_data) {
   gtk_window_present(GTK_WINDOW(window));
 }
 
-int node_run(node_t *node, int argc, char **argv) {
+int node_type_window_run(node_t *node, int argc, char **argv) {
   const char *desktop = g_getenv("XDG_CURRENT_DESKTOP");
   int status;
   void *app;

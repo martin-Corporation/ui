@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
   list_append(window->children, box);
   list_append(box->children, text);
   list_append(box->children, button);
-  int status = node_run(window, argc, argv);
+  int status = node_type_window_run(window, argc, argv);
   node_destroy(window);
 
   return status;

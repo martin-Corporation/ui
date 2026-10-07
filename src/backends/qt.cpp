@@ -90,7 +90,7 @@ void node_render(node_t *node, QQuickItem *parent) {
   }
 }
 
-extern "C" int node_run(node_t *node, int argc, char **argv) {
+extern "C" int node_type_window_run(node_t *node, int argc, char **argv) {
   QGuiApplication app(argc, argv);
   QQmlEngine _engine;
   QQuickWindow window;
