@@ -33,12 +33,14 @@ public slots:
 void node_render(node_t *node, QQuickItem *parent) {
   switch (node->type) {
     case node_type_box: {
-      auto data = *(node_type_box_orientation_type_t *)node->data;
-      auto box = create_item(engine, "QtQuick.Layouts",
-                             (data == node_type_box_orientation_type_horizontal)
-                                 ? "RowLayout"
-                                 : "ColumnLayout");
+      auto data = (node_type_box_data_t *)node->data;
+      auto box = create_item(
+          engine, "QtQuick.Layouts",
+          (data->orientation == node_type_box_orientation_type_horizontal)
+              ? "RowLayout"
+              : "ColumnLayout");
 
+      box->setProperty("spacing", (int)data->spacing);
       box->setParentItem(parent);
 
       for (size_t i = 0; i < node->children->size; i++) {

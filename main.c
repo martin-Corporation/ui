@@ -5,10 +5,9 @@ void clicked(void) { puts("Hello, World!"); }
 
 int main(int argc, char **argv) {
   node_t *window = node_initialize(node_type_window, "com.mrtn.demo");
-  node_type_box_orientation_type_t orientation =
-      node_type_box_orientation_type_vertical;
+  node_t *box =
+      node_type_box_initialize(node_type_box_orientation_type_vertical, 0);
 
-  node_t *box = node_initialize(node_type_box, &orientation);
   node_t *text = node_initialize(node_type_text, "Welcome to martinUI!");
   node_t *button = node_type_button_initialize(
       "Button", node_type_button_variant_type_primary, clicked);

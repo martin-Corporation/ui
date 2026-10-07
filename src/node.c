@@ -14,6 +14,16 @@ node_t *node_type_button_initialize(char *label,
   return button;
 }
 
+node_t *node_type_box_initialize(node_type_box_orientation_type_t orientation,
+                                 size_t spacing) {
+  node_type_box_data_t *data = malloc(sizeof(node_type_box_data_t));
+  node_t *box = node_initialize(node_type_box, data);
+  data->orientation = orientation;
+  data->spacing = spacing;
+
+  return box;
+}
+
 node_t *node_initialize(node_type_t type, void *data) {
   node_t *node = malloc(sizeof(node_t));
   node->type = type;
@@ -29,7 +39,7 @@ void node_destroy(node_t *node) {
     node_destroy(child);
   }
 
-  if (node->type == node_type_button) {
+  if (node->type == node_type_box || node->type == node_type_button) {
     free(node->data);
   }
 
