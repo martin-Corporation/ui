@@ -32,58 +32,59 @@ public slots:
 
 void node_render(node_t *node, QQuickItem *parent) {
   switch (node->type) {
-  case node_type_box: {
-    auto box = create_item(engine, "QtQuick.Layouts",
-                           (*(node_type_box_orientation_type_t *)node->data ==
-                            node_type_box_orientation_type_horizontal)
-                               ? "RowLayout"
-                               : "ColumnLayout");
+    case node_type_box: {
+      auto data = *(node_type_box_orientation_type_t *)node->data;
+      auto box = create_item(engine, "QtQuick.Layouts",
+                             (data == node_type_box_orientation_type_horizontal)
+                                 ? "RowLayout"
+                                 : "ColumnLayout");
 
-    box->setParentItem(parent);
+      box->setParentItem(parent);
 
-    for (size_t i = 0; i < node->children->size; i++) {
-      node_render((node_t *)node->children->items[i], box);
-    }
-
-    break;
-  }
-  case node_type_button: {
-    auto button = create_item(engine, "QtQuick.Controls", "Button");
-    auto data = (node_type_button_data_t *)node->data;
-    button->setParentItem(parent);
-
-    if (data->clicked) {
-      auto listener = new NodeEventListener(node, button);
-      QObject::connect(button, SIGNAL(clicked()), listener, SLOT(handle()));
-    }
-
-    if (data->variant == node_type_button_variant_type_primary) {
-      button->setProperty("highlighted", true);
-    }
-
-    for (size_t i = 0; i < node->children->size; i++) {
-      auto child = (node_t *)node->children->items[i];
-
-      if (child->type == node_type_text) {
-        button->setProperty("text", QString::fromUtf8((char *)child->data));
-      } else {
-        node_render(child, button);
+      for (size_t i = 0; i < node->children->size; i++) {
+        auto child = (node_t *)node->children->items[i];
+        node_render(child, box);
       }
+
+      break;
     }
+    case node_type_button: {
+      auto button = create_item(engine, "QtQuick.Controls", "Button");
+      auto data = (node_type_button_data_t *)node->data;
+      button->setParentItem(parent);
 
-    break;
-  }
-  case node_type_text: {
-    auto text = create_item(engine, "QtQuick", "Text");
-    text->setProperty("text", QString::fromUtf8((char *)node->data));
-    text->setProperty("color", QGuiApplication::palette().windowText());
-    text->setParentItem(parent);
+      if (data->clicked) {
+        auto listener = new NodeEventListener(node, button);
+        QObject::connect(button, SIGNAL(clicked()), listener, SLOT(handle()));
+      }
 
-    break;
-  }
-  default: {
-    break;
-  }
+      if (data->variant == node_type_button_variant_type_primary) {
+        button->setProperty("highlighted", true);
+      }
+
+      for (size_t i = 0; i < node->children->size; i++) {
+        auto child = (node_t *)node->children->items[i];
+
+        if (child->type == node_type_text) {
+          button->setProperty("text", QString::fromUtf8((char *)child->data));
+        } else {
+          node_render(child, button);
+        }
+      }
+
+      break;
+    }
+    case node_type_text: {
+      auto text = create_item(engine, "QtQuick", "Text");
+      text->setProperty("text", QString::fromUtf8((char *)node->data));
+      text->setProperty("color", QGuiApplication::palette().windowText());
+      text->setParentItem(parent);
+
+      break;
+    }
+    default: {
+      break;
+    }
   }
 }
 
