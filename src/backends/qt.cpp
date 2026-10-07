@@ -78,8 +78,8 @@ void node_render(node_t *node, QQuickItem *parent) {
     }
     case node_type_text: {
       auto text = create_item(engine, "QtQuick", "Text");
-      text->setProperty("text", QString::fromUtf8((char *)node->data));
       text->setProperty("color", QGuiApplication::palette().windowText());
+      text->setProperty("text", QString::fromUtf8((char *)node->data));
       text->setParentItem(parent);
 
       break;
@@ -93,8 +93,8 @@ void node_render(node_t *node, QQuickItem *parent) {
 extern "C" int node_type_window_run(node_t *node, int argc, char **argv) {
   auto data = (node_type_window_data_t *)node->data;
   QGuiApplication app(argc, argv);
-  QQmlEngine _engine;
   QQuickWindow window;
+  QQmlEngine _engine;
   engine = &_engine;
 
   app.setDesktopFileName(QString::fromUtf8(data->id));
