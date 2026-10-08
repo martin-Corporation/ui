@@ -61,7 +61,8 @@ void node_destroy(node_t *node) {
     node_destroy(child);
   }
 
-  if (node->type == node_type_box || node->type == node_type_button) {
+  if (node->type == node_type_window || node->type == node_type_alert_dialog ||
+      node->type == node_type_box || node->type == node_type_button) {
     free(node->data);
   }
 
