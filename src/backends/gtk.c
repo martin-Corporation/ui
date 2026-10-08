@@ -6,6 +6,17 @@ GtkWidget *node_render(node_t *node) {
     case node_type_text: {
       return gtk_label_new_with_mnemonic((char *)node->data);
     }
+    case node_type_alert_dialog: {
+      node_type_alert_dialog_data_t *data = node->data;
+      GtkAlertDialog *dialog = gtk_alert_dialog_new("%s", data->title);
+      data->rendered = dialog;
+
+      if (data->description) {
+        gtk_alert_dialog_set_detail(dialog, data->description);
+      }
+
+      break;
+    }
     case node_type_box: {
       node_type_box_data_t *data = node->data;
       GtkWidget *box =
@@ -178,6 +189,12 @@ static void activate(GtkApplication *app, gpointer user_data) {
   }
 
   gtk_window_present(GTK_WINDOW(window));
+}
+
+void node_type_alert_dialog_show(node_t *node) {
+  node_type_alert_dialog_data_t *data = node->data;
+  GtkAlertDialog *dialog = data->rendered;
+  gtk_alert_dialog_show(dialog, NULL);
 }
 
 int node_type_window_run(node_t *node, int argc, char **argv) {

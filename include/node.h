@@ -3,6 +3,7 @@
 
 typedef enum node_type {
   node_type_window,
+  node_type_alert_dialog,
   node_type_box,
   node_type_button,
   node_type_text
@@ -13,6 +14,12 @@ typedef struct node_type_window_data {
   size_t width;
   size_t height;
 } node_type_window_data_t;
+
+typedef struct node_type_alert_dialog_data {
+  char *title;
+  char *description;
+  void *rendered;
+} node_type_alert_dialog_data_t;
 
 typedef enum node_type_box_orientation_type {
   node_type_box_orientation_type_horizontal,
@@ -49,9 +56,11 @@ node_t *node_type_button_initialize(char *label,
                                     void (*clicked)(void));
 node_t *node_type_box_initialize(node_type_box_orientation_type_t orientation,
                                  size_t spacing);
+node_t *node_type_alert_dialog_initialize(char *title, char *description);
 node_t *node_type_window_initialize(char *id, size_t width, size_t height);
 int node_type_window_run(node_t *node, int argc, char **argv);
 node_t *node_initialize(node_type_t type, void *data);
+void node_type_alert_dialog_show(node_t *node);
 void node_destroy(node_t *node);
 #if defined(__cplusplus)
 }

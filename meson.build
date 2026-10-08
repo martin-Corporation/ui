@@ -30,7 +30,7 @@ elif backend == 'qt'
     ),
   ]
 
-  add_languages('cpp', native: true)
+  add_languages('cpp', native: false)
   sources += [
     'src/backends/qt.cpp',
     import('qt6').compile_moc(

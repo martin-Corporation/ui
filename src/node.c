@@ -24,6 +24,18 @@ node_t *node_type_box_initialize(node_type_box_orientation_type_t orientation,
   return box;
 }
 
+node_t *node_type_alert_dialog_initialize(char *title, char *description) {
+  node_type_alert_dialog_data_t *data =
+      malloc(sizeof(node_type_alert_dialog_data_t));
+
+  node_t *dialog = node_initialize(node_type_alert_dialog, data);
+  data->description = description;
+  data->rendered = NULL;
+  data->title = title;
+
+  return dialog;
+}
+
 node_t *node_type_window_initialize(char *id, size_t width, size_t height) {
   node_type_window_data_t *data = malloc(sizeof(node_type_window_data_t));
   node_t *window = node_initialize(node_type_window, data);
