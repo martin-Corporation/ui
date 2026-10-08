@@ -40,12 +40,11 @@ elif backend == 'qt'
   ]
 endif
 
-include_directories = include_directories('include')
-
+includes = include_directories('include')
 executable(
   'ui',
   sources: sources,
   dependencies: dependencies,
   install: true,
-  include_directories: include_directories,
+  include_directories: includes,
 )
