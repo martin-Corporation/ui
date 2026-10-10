@@ -1,7 +1,9 @@
 #include <adwaita.h>
 #include <node.h>
 
-GtkWidget *node_render(node_t *node) {
+static GtkWidget *window;
+
+static GtkWidget *node_render(node_t *node) {
   switch (node->type) {
     case node_type_text: {
       return gtk_label_new_with_mnemonic((char *)node->data);
@@ -80,7 +82,7 @@ typedef enum color_scheme {
   color_scheme_prefer_light
 } color_scheme_t;
 
-void set_color_scheme(GtkSettings *settings, GVariant *variant) {
+static void set_color_scheme(GtkSettings *settings, GVariant *variant) {
   color_scheme_t color_scheme = g_variant_get_uint32(variant);
 
   if (color_scheme > color_scheme_prefer_light) {
@@ -91,9 +93,11 @@ void set_color_scheme(GtkSettings *settings, GVariant *variant) {
                color_scheme == color_scheme_prefer_dark, NULL);
 }
 
-void settings_portal_changed_cb(GDBusProxy *proxy, const char *sender_name,
-                                const char *signal_name, GVariant *parameters,
-                                GtkSettings *settings) {
+static void settings_portal_changed_cb(GDBusProxy *proxy,
+                                       const char *sender_name,
+                                       const char *signal_name,
+                                       GVariant *parameters,
+                                       GtkSettings *settings) {
   (void)proxy;
   (void)sender_name;
 
@@ -168,8 +172,8 @@ static void init_portal(GtkSettings *settings) {
 
 static void activate(GtkApplication *app, gpointer user_data) {
   const char *desktop = g_getenv("XDG_CURRENT_DESKTOP");
-  GtkWidget *window = gtk_application_window_new(app);
   GtkSettings *settings = gtk_settings_get_default();
+  window = gtk_application_window_new(app);
   node_t *node = user_data;
   node_type_window_data_t *data = node->data;
 
@@ -194,7 +198,7 @@ static void activate(GtkApplication *app, gpointer user_data) {
 void node_type_alert_dialog_show(node_t *node) {
   node_type_alert_dialog_data_t *data = node->data;
   GtkAlertDialog *dialog = data->rendered;
-  gtk_alert_dialog_show(dialog, NULL);
+  gtk_alert_dialog_show(dialog, GTK_WINDOW(window));
 }
 
 int node_type_window_run(node_t *node, int argc, char **argv) {

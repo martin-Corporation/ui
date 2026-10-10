@@ -18,7 +18,7 @@ sources = [
 ]
 
 if backend == 'gtk'
-  dependencies += [dependency('gtk4'), dependency('libadwaita-1')]
+  dependencies += [dependency('gtk4', version: '>=4.10'), dependency('libadwaita-1')]
   sources += 'src/backends/gtk.c'
 elif backend == 'qt'
   dependencies += [

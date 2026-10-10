@@ -29,7 +29,8 @@ public slots:
   }
 };
 
-void node_render(node_t *node, QQuickItem *parent, QQuickWindow *window) {
+static void node_render(node_t *node, QQuickItem *parent,
+                        QQuickWindow *window) {
   switch (node->type) {
     case node_type_alert_dialog: {
       auto data = (node_type_alert_dialog_data_t *)node->data;
