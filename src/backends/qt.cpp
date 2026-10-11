@@ -21,7 +21,13 @@ static QObject *create_object(QQmlEngine *engine, const char *module,
     return nullptr;
   }
 
-  return component.create();
+  auto object = component.create();
+
+  if (!object) {
+    qWarning() << component.errors();
+  }
+
+  return object;
 }
 
 class NodeEventListener : public QObject {
