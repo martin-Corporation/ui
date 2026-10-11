@@ -1,3 +1,5 @@
+#include <QQmlContext>
+#include <QQmlExpression>
 #include <QtQuick/QtQuick>
 #include <node.h>
 
@@ -29,6 +31,21 @@ public slots:
   }
 };
 
+static void bind_implicit_size(QQuickItem *wrapper, QQuickItem *content,
+                               const char *property, int padding) {
+  auto expression = new QQmlExpression(
+      engine->rootContext(), content,
+      QString("%1 + %2").arg(property).arg(padding * 2), wrapper);
+
+  expression->setNotifyOnValueChanged(true);
+  auto update = [expression, wrapper, property]() {
+    wrapper->setProperty(property, expression->evaluate());
+  };
+
+  QObject::connect(expression, &QQmlExpression::valueChanged, wrapper, update);
+  update();
+}
+
 static void node_render(node_t *node, QQuickItem *parent,
                         QQuickWindow *window) {
   switch (node->type) {
@@ -47,20 +64,32 @@ static void node_render(node_t *node, QQuickItem *parent,
       break;
     }
     case node_type_box: {
+      auto wrapper =
+          qobject_cast<QQuickItem *>(create_object(engine, "QtQuick", "Item"));
+
       auto data = (node_type_box_data_t *)node->data;
+      int padding = data->padded ? 8 : 0;
       auto box = qobject_cast<QQuickItem *>(create_object(
           engine, "QtQuick.Layouts",
           (data->orientation == node_type_box_orientation_type_horizontal)
               ? "RowLayout"
               : "ColumnLayout"));
 
-      box->setProperty("spacing", (int)data->spacing);
-      box->setParentItem(parent);
+      box->setProperty("spacing", data->spaced ? 8 : 0);
+      wrapper->setParentItem(parent);
+      box->setParentItem(wrapper);
+
+      auto anchors = box->property("anchors").value<QObject *>();
+      anchors->setProperty("fill", QVariant::fromValue(wrapper));
+      anchors->setProperty("margins", padding);
 
       for (size_t i = 0; i < node->children->size; i++) {
         auto child = (node_t *)node->children->items[i];
         node_render(child, box, window);
       }
+
+      bind_implicit_size(wrapper, box, "implicitWidth", padding);
+      bind_implicit_size(wrapper, box, "implicitHeight", padding);
 
       break;
     }

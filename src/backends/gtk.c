@@ -21,8 +21,19 @@ static GtkWidget *node_render(node_t *node) {
     }
     case node_type_box: {
       node_type_box_data_t *data = node->data;
-      GtkWidget *box =
-          gtk_box_new((GtkOrientation)data->orientation, data->spacing);
+      size_t padding = data->padded ? 12 : 0;
+      GtkWidget *box = gtk_box_new(
+          (GtkOrientation)data->orientation,
+          data->spaced
+              ? (data->orientation == node_type_box_orientation_type_horizontal
+                     ? 6
+                     : 12)
+              : 0);
+
+      gtk_widget_set_margin_start(box, padding);
+      gtk_widget_set_margin_end(box, padding);
+      gtk_widget_set_margin_top(box, padding);
+      gtk_widget_set_margin_bottom(box, padding);
 
       for (size_t i = 0; i < node->children->size; i++) {
         node_t *child = node->children->items[i];

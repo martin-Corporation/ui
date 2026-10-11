@@ -1,5 +1,6 @@
 #pragma once
 #include <list.h>
+#include <stdbool.h>
 
 typedef enum node_type {
   node_type_window,
@@ -27,7 +28,8 @@ typedef enum node_type_box_orientation_type {
 } node_type_box_orientation_type_t;
 
 typedef struct node_type_box_data {
-  size_t spacing;
+  bool padded;
+  bool spaced;
   node_type_box_orientation_type_t orientation;
 } node_type_box_data_t;
 
@@ -55,7 +57,7 @@ node_t *node_type_button_initialize(char *label,
                                     node_type_button_variant_type_t variant,
                                     void (*clicked)(void));
 node_t *node_type_box_initialize(node_type_box_orientation_type_t orientation,
-                                 size_t spacing);
+                                 bool padded, bool spaced);
 node_t *node_type_alert_dialog_initialize(char *title, char *description);
 node_t *node_type_window_initialize(char *id, size_t width, size_t height);
 int node_type_window_run(node_t *node, int argc, char **argv);
