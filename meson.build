@@ -25,7 +25,7 @@ elif backend == 'qt'
     dependency(
       'qt6',
       modules: ['Core', 'Gui', 'Qml', 'Quick'],
-      version: '>=6.5',
+      version: '>=6.4.2',
       required: true,
     ),
   ]

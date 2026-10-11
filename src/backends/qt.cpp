@@ -8,7 +8,18 @@ static QQmlEngine *engine;
 static QObject *create_object(QQmlEngine *engine, const char *module,
                               const char *type) {
   QQmlComponent component(engine);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
   component.loadFromModule(module, type);
+#else
+  QByteArray source = QString("import %1\n%2 {}").arg(module, type).toUtf8();
+  component.setData(source, QUrl());
+#endif
+
+  if (component.isError()) {
+    qWarning() << component.errors();
+    return nullptr;
+  }
 
   return component.create();
 }
