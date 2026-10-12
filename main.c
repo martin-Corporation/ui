@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
   node_t *box = node_type_box_initialize(
       node_type_box_orientation_type_vertical, true, true);
 
-  node_t *text = node_initialize(node_type_text, "Welcome to martinUI!");
+  node_t *text = node_type_text_initialize("Welcome to martinUI!");
   node_t *button = node_type_button_initialize(
       "Button", node_type_button_variant_type_primary, clicked);
 

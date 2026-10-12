@@ -56,6 +56,10 @@ node_t *node_initialize(node_type_t type, void *data) {
   return node;
 }
 
+node_t *node_type_text_initialize(char *text) {
+  return node_initialize(node_type_text, text);
+}
+
 void node_destroy(node_t *node) {
   for (size_t i = 0; i < node->children->size; i++) {
     node_t *child = node->children->items[i];

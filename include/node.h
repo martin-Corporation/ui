@@ -63,6 +63,7 @@ node_t *node_type_window_initialize(char *id, size_t width, size_t height);
 int node_type_window_run(node_t *node, int argc, char **argv);
 node_t *node_initialize(node_type_t type, void *data);
 void node_type_alert_dialog_show(node_t *node);
+node_t *node_type_text_initialize(char *text);
 void node_destroy(node_t *node);
 #if defined(__cplusplus)
 }
