@@ -6,7 +6,11 @@ static GtkWidget *window;
 static GtkWidget *node_render(node_t *node) {
   switch (node->type) {
     case node_type_text: {
-      return gtk_label_new_with_mnemonic((char *)node->data);
+      node_type_text_data_t *data = node->data;
+      GtkWidget *label = gtk_label_new(data->text);
+      data->rendered = label;
+
+      return label;
     }
     case node_type_alert_dialog: {
       node_type_alert_dialog_data_t *data = node->data;
@@ -210,6 +214,16 @@ void node_type_alert_dialog_show(node_t *node) {
   node_type_alert_dialog_data_t *data = node->data;
   GtkAlertDialog *dialog = data->rendered;
   gtk_alert_dialog_show(dialog, GTK_WINDOW(window));
+}
+
+void node_type_text_update(node_t *node, char *text) {
+  node_type_text_data_t *data = node->data;
+  data->text = text;
+
+  if (data->rendered) {
+    GtkWidget *label = data->rendered;
+    gtk_label_set_text(GTK_LABEL(label), data->text);
+  }
 }
 
 int node_type_window_run(node_t *node, int argc, char **argv) {

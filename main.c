@@ -1,8 +1,12 @@
 #include <node.h>
-#include <stdio.h>
 
 node_t *dialog;
-void clicked(void) { node_type_alert_dialog_show(dialog); }
+node_t *label;
+
+void clicked(void) {
+  node_type_text_update(label, "Hi!");
+  node_type_alert_dialog_show(dialog);
+}
 
 int main(int argc, char **argv) {
   node_t *window = node_type_window_initialize("com.mrtn.demo", 500, 250);
@@ -16,6 +20,7 @@ int main(int argc, char **argv) {
   node_t *button = node_type_button_initialize(
       "Button", node_type_button_variant_type_primary, clicked);
 
+  label = button->children->items[0];
   list_append(window->children, dialog);
   list_append(window->children, box);
   list_append(box->children, text);

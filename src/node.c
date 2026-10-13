@@ -6,7 +6,7 @@ node_t *node_type_button_initialize(char *label,
                                     void (*clicked)(void)) {
   node_type_button_data_t *data = malloc(sizeof(node_type_button_data_t));
   node_t *button = node_initialize(node_type_button, data);
-  node_t *text = node_initialize(node_type_text, label);
+  node_t *text = node_type_text_initialize(label);
   data->variant = variant;
   data->clicked = clicked;
   list_append(button->children, text);
@@ -57,7 +57,12 @@ node_t *node_initialize(node_type_t type, void *data) {
 }
 
 node_t *node_type_text_initialize(char *text) {
-  return node_initialize(node_type_text, text);
+  node_type_text_data_t *data = malloc(sizeof(node_type_text_data_t));
+  node_t *node = node_initialize(node_type_text, data);
+  data->rendered = NULL;
+  data->text = text;
+
+  return node;
 }
 
 void node_destroy(node_t *node) {
@@ -67,7 +72,8 @@ void node_destroy(node_t *node) {
   }
 
   if (node->type == node_type_window || node->type == node_type_alert_dialog ||
-      node->type == node_type_box || node->type == node_type_button) {
+      node->type == node_type_box || node->type == node_type_button ||
+      node->type == node_type_text) {
     free(node->data);
   }
 

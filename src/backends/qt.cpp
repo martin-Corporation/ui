@@ -130,7 +130,9 @@ static void node_render(node_t *node, QQuickItem *parent,
         auto child = (node_t *)node->children->items[i];
 
         if (child->type == node_type_text) {
-          button->setProperty("text", QString::fromUtf8((char *)child->data));
+          auto data = (node_type_text_data_t *)child->data;
+          data->rendered = button;
+          button->setProperty("text", QString::fromUtf8(data->text));
         } else {
           node_render(child, button, window);
         }
@@ -139,11 +141,13 @@ static void node_render(node_t *node, QQuickItem *parent,
       break;
     }
     case node_type_text: {
+      auto data = (node_type_text_data_t *)node->data;
       auto text =
           qobject_cast<QQuickItem *>(create_object(engine, "QtQuick", "Text"));
 
+      data->rendered = text;
       text->setProperty("color", QGuiApplication::palette().windowText());
-      text->setProperty("text", QString::fromUtf8((char *)node->data));
+      text->setProperty("text", QString::fromUtf8(data->text));
       text->setParentItem(parent);
 
       break;
@@ -158,6 +162,16 @@ extern "C" void node_type_alert_dialog_show(node_t *node) {
   auto data = (node_type_alert_dialog_data_t *)node->data;
   auto dialog = (QObject *)data->rendered;
   QMetaObject::invokeMethod(dialog, "open");
+}
+
+extern "C" void node_type_text_update(node_t *node, char *text) {
+  auto data = (node_type_text_data_t *)node->data;
+  data->text = text;
+
+  if (data->rendered) {
+    auto label = (QQuickItem *)data->rendered;
+    label->setProperty("text", QString::fromUtf8(data->text));
+  }
 }
 
 extern "C" int node_type_window_run(node_t *node, int argc, char **argv) {
