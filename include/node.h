@@ -39,8 +39,10 @@ typedef enum node_type_button_variant_type {
   node_type_button_variant_type_destructive
 } node_type_button_variant_type_t;
 
+typedef void (*node_type_button_clicked_t)(void);
+
 typedef struct node_type_button_data {
-  void (*clicked)(void);
+  node_type_button_clicked_t clicked;
   node_type_button_variant_type_t variant;
 } node_type_button_data_t;
 
@@ -60,7 +62,7 @@ extern "C" {
 #endif
 node_t *node_type_button_initialize(char *label,
                                     node_type_button_variant_type_t variant,
-                                    void (*clicked)(void));
+                                    node_type_button_clicked_t clicked);
 node_t *node_type_box_initialize(node_type_box_orientation_type_t orientation,
                                  bool padded, bool spaced);
 node_t *node_type_alert_dialog_initialize(char *title, char *description);

@@ -3,7 +3,7 @@
 
 node_t *node_type_button_initialize(char *label,
                                     node_type_button_variant_type_t variant,
-                                    void (*clicked)(void)) {
+                                    node_type_button_clicked_t clicked) {
   node_type_button_data_t *data = malloc(sizeof(node_type_button_data_t));
   node_t *button = node_initialize(node_type_button, data);
   node_t *text = node_type_text_initialize(label);
