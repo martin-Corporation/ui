@@ -5,3 +5,5 @@ IndentWidth: 2
 BreakBeforeBraces: Attach
 InsertNewlineAtEOF: true
 IndentCaseLabels: true
+MaxEmptyLinesToKeep: 1
+SeparateDefinitionBlocks: Always

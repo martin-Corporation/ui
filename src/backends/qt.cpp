@@ -35,10 +35,12 @@ class NodeEventListener : public QObject {
 
 public:
   node_t *node;
+
   explicit NodeEventListener(node_t *node, QObject *parent = nullptr)
       : QObject(parent), node(node) {}
 
 public slots:
+
   void handle() {
     auto data = (node_type_button_data_t *)node->data;
 
