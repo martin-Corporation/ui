@@ -39,8 +39,10 @@ static GtkWidget *node_render(node_t *node) {
       gtk_widget_set_margin_top(box, padding);
       gtk_widget_set_margin_bottom(box, padding);
 
-      for (size_t i = 0; i < node->children->size; i++) {
-        node_t *child = node->children->items[i];
+      list_t *children = node->children;
+
+      for (size_t i = 0; i < children->size; i++) {
+        node_t *child = children->items[i];
         GtkWidget *widget = node_render(child);
 
         if (widget) {
@@ -72,8 +74,10 @@ static GtkWidget *node_render(node_t *node) {
         }
       }
 
-      for (size_t i = 0; i < node->children->size; i++) {
-        node_t *child = node->children->items[i];
+      list_t *children = node->children;
+
+      for (size_t i = 0; i < children->size; i++) {
+        node_t *child = children->items[i];
         GtkWidget *widget = node_render(child);
 
         if (widget) {
@@ -198,8 +202,10 @@ static void activate(GtkApplication *app, gpointer user_data) {
 
   gtk_window_set_default_size(GTK_WINDOW(window), data->width, data->height);
 
-  for (size_t i = 0; i < node->children->size; i++) {
-    node_t *child = node->children->items[i];
+  list_t *children = node->children;
+
+  for (size_t i = 0; i < children->size; i++) {
+    node_t *child = children->items[i];
     GtkWidget *widget = node_render(child);
 
     if (widget) {

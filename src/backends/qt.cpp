@@ -102,8 +102,10 @@ static void node_render(node_t *node, QQuickItem *parent,
       anchors->setProperty("fill", QVariant::fromValue(wrapper));
       anchors->setProperty("margins", padding);
 
-      for (size_t i = 0; i < node->children->size; i++) {
-        auto child = (node_t *)node->children->items[i];
+      auto children = node->children;
+
+      for (size_t i = 0; i < children->size; i++) {
+        auto child = (node_t *)children->items[i];
         node_render(child, box, window);
       }
 
@@ -128,8 +130,10 @@ static void node_render(node_t *node, QQuickItem *parent,
         button->setProperty("highlighted", true);
       }
 
-      for (size_t i = 0; i < node->children->size; i++) {
-        auto child = (node_t *)node->children->items[i];
+      auto children = node->children;
+
+      for (size_t i = 0; i < children->size; i++) {
+        auto child = (node_t *)children->items[i];
 
         if (child->type == node_type_text) {
           auto data = (node_type_text_data_t *)child->data;
@@ -188,8 +192,10 @@ extern "C" int node_type_window_run(node_t *node, int argc, char **argv) {
   window.setHeight(data->height);
   window.setWidth(data->width);
 
-  for (size_t i = 0; i < node->children->size; i++) {
-    auto child = (node_t *)node->children->items[i];
+  auto children = node->children;
+
+  for (size_t i = 0; i < children->size; i++) {
+    auto child = (node_t *)children->items[i];
     node_render(child, window.contentItem(), &window);
   }
 
