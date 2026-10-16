@@ -17,7 +17,16 @@ sources = [
   'src/node.c',
 ]
 
-if backend == 'gtk'
+if backend == 'appkit'
+  dependencies += [
+    declare_dependency(
+      link_args: ['-framework', 'AppKit'],
+    ),
+  ]
+
+  add_languages('objc', native: false)
+  sources += 'src/backends/appkit.m'
+elif backend == 'gtk'
   dependencies += [dependency('gtk4', version: '>=4.10'), dependency('libadwaita-1')]
   sources += 'src/backends/gtk.c'
 elif backend == 'qt'

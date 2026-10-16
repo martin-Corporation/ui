@@ -1,1 +1,1 @@
-option('ui_backend', type: 'combo', choices: ['gtk', 'qt'], value: 'gtk')
+option('ui_backend', type: 'combo', choices: ['appkit', 'gtk', 'qt'], value: 'gtk')
