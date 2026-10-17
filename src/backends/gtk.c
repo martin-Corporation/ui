@@ -217,10 +217,23 @@ static void activate(GtkApplication *app, gpointer user_data) {
   gtk_window_present(GTK_WINDOW(window));
 }
 
+static void node_type_alert_dialog_handle_event(GObject *source,
+                                                GAsyncResult *result,
+                                                gpointer user_data) {
+  node_type_alert_dialog_data_t *data = user_data;
+  gtk_alert_dialog_choose_finish(GTK_ALERT_DIALOG(source), result, NULL);
+
+  if (data->handler != NULL) {
+    data->handler();
+  }
+}
+
 void node_type_alert_dialog_show(node_t *node) {
   node_type_alert_dialog_data_t *data = node->data;
   GtkAlertDialog *dialog = data->rendered;
-  gtk_alert_dialog_show(dialog, GTK_WINDOW(window));
+  gtk_alert_dialog_choose(
+      dialog, GTK_WINDOW(window), NULL,
+      data->handler != NULL ? node_type_alert_dialog_handle_event : NULL, data);
 }
 
 void node_type_text_update(node_t *node, char *text) {

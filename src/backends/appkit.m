@@ -4,10 +4,10 @@
 
 static NSWindow *window;
 
-@interface node_event_listener_t : NSObject
+@interface node_type_button_event_handler_t : NSObject
 @property(nonatomic, assign) node_t *node;
 @end
-@implementation node_event_listener_t
+@implementation node_type_button_event_handler_t
 
 - (void)handleEvent:(id)sender {
   (void)sender;
@@ -24,8 +24,10 @@ static NSWindow *window;
 
 @end
 
-static void node_connect_event(NSButton *button, node_t *node) {
-  node_event_listener_t *listener = node_event_listener_t.new;
+static void node_type_button_connect_event(NSButton *button, node_t *node) {
+  node_type_button_event_handler_t *listener =
+      node_type_button_event_handler_t.new;
+
   listener.node = node;
   button.target = listener;
   button.action = @selector(handleEvent:);
@@ -91,7 +93,7 @@ static NSView *node_render(node_t *node) {
       node_type_button_data_t *data = node->data;
 
       if (data->clicked) {
-        node_connect_event(button, node);
+        node_type_button_connect_event(button, node);
       }
 
       if (@available(macOS 26.0, *)) {
@@ -147,7 +149,11 @@ static NSView *node_render(node_t *node) {
 void node_type_alert_dialog_show(node_t *node) {
   node_type_alert_dialog_data_t *data = node->data;
   NSAlert *alert = data->rendered;
-  [alert beginSheetModalForWindow:window completionHandler:nil];
+  [alert beginSheetModalForWindow:window
+                completionHandler:(data->handler == nil ? nil
+                                                        : ^(NSModalResponse _) {
+                                                            data->handler();
+                                                          })];
 }
 
 void node_type_text_update(node_t *node, char *text) {

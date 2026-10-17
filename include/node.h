@@ -16,10 +16,13 @@ typedef struct node_type_window_data {
   size_t height;
 } node_type_window_data_t;
 
+typedef void (*node_event_handler_t)(void);
+
 typedef struct node_type_alert_dialog_data {
   char *title;
   char *description;
   void *rendered;
+  node_event_handler_t handler;
 } node_type_alert_dialog_data_t;
 
 typedef enum node_type_box_orientation_type {
@@ -39,10 +42,8 @@ typedef enum node_type_button_variant_type {
   node_type_button_variant_type_destructive
 } node_type_button_variant_type_t;
 
-typedef void (*node_type_button_clicked_t)(void);
-
 typedef struct node_type_button_data {
-  node_type_button_clicked_t clicked;
+  node_event_handler_t clicked;
   node_type_button_variant_type_t variant;
 } node_type_button_data_t;
 
@@ -63,11 +64,12 @@ extern "C" {
 #endif
 node_t *node_type_button_initialize(char *label,
                                     node_type_button_variant_type_t variant,
-                                    node_type_button_clicked_t clicked);
+                                    node_event_handler_t clicked);
 node_t *node_type_box_initialize(node_type_box_orientation_type_t orientation,
                                  bool padded, bool spaced);
+node_t *node_type_alert_dialog_initialize(char *title, char *description,
+                                          node_event_handler_t handler);
 node_t *node_type_window_initialize(char *id, size_t width, size_t height);
-node_t *node_type_alert_dialog_initialize(char *title, char *description);
 node_t *node_type_text_initialize(char *text, bool selectable);
 int node_type_window_run(node_t *node, int argc, char **argv);
 node_t *node_initialize(node_type_t type, void *data);

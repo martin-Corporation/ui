@@ -42,10 +42,28 @@ public:
 public slots:
 
   void handle() {
-    auto data = (node_type_button_data_t *)node->data;
+    switch (node->type) {
+      case node_type_button: {
+        auto data = (node_type_button_data_t *)node->data;
 
-    if (data->clicked) {
-      data->clicked();
+        if (data->clicked != nullptr) {
+          data->clicked();
+        }
+
+        break;
+      }
+      case node_type_alert_dialog: {
+        auto data = (node_type_alert_dialog_data_t *)node->data;
+
+        if (data->handler != nullptr) {
+          data->handler();
+        }
+
+        break;
+      }
+      default: {
+        break;
+      }
     }
   }
 };
@@ -69,11 +87,16 @@ static void node_render(node_t *node, QQuickItem *parent,
                         QQuickWindow *window) {
   switch (node->type) {
     case node_type_alert_dialog: {
-      auto data = (node_type_alert_dialog_data_t *)node->data;
       auto dialog = create_object(engine, "QtQuick.Dialogs", "MessageDialog");
+      auto data = (node_type_alert_dialog_data_t *)node->data;
       dialog->setProperty("parentWindow", QVariant::fromValue(window));
       dialog->setProperty("text", QString::fromUtf8(data->title));
       data->rendered = dialog;
+
+      if (data->handler != NULL) {
+        auto listener = new NodeEventListener(node, dialog);
+        QObject::connect(dialog, SIGNAL(accepted()), listener, SLOT(handle()));
+      }
 
       if (data->description) {
         dialog->setProperty("informativeText",

@@ -11,7 +11,7 @@ void clicked(void) {
 int main(int argc, char **argv) {
   node_t *window = node_type_window_initialize("com.mrtn.demo", 500, 250);
   dialog = node_type_alert_dialog_initialize(
-      "Hello, World!", "This is an example alert dialog.");
+      "Hello, World!", "This is an example alert dialog.", NULL);
 
   node_t *box = node_type_box_initialize(
       node_type_box_orientation_type_vertical, true, true);

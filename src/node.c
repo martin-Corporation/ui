@@ -3,7 +3,7 @@
 
 node_t *node_type_button_initialize(char *label,
                                     node_type_button_variant_type_t variant,
-                                    node_type_button_clicked_t clicked) {
+                                    node_event_handler_t clicked) {
   node_type_button_data_t *data = malloc(sizeof(node_type_button_data_t));
   node_t *button = node_initialize(node_type_button, data);
   node_t *text = node_type_text_initialize(label, false);
@@ -25,6 +25,20 @@ node_t *node_type_box_initialize(node_type_box_orientation_type_t orientation,
   return box;
 }
 
+node_t *node_type_alert_dialog_initialize(char *title, char *description,
+                                          node_event_handler_t handler) {
+  node_type_alert_dialog_data_t *data =
+      malloc(sizeof(node_type_alert_dialog_data_t));
+
+  node_t *dialog = node_initialize(node_type_alert_dialog, data);
+  data->description = description;
+  data->handler = handler;
+  data->rendered = NULL;
+  data->title = title;
+
+  return dialog;
+}
+
 node_t *node_type_window_initialize(char *id, size_t width, size_t height) {
   node_type_window_data_t *data = malloc(sizeof(node_type_window_data_t));
   node_t *window = node_initialize(node_type_window, data);
@@ -33,18 +47,6 @@ node_t *node_type_window_initialize(char *id, size_t width, size_t height) {
   data->id = id;
 
   return window;
-}
-
-node_t *node_type_alert_dialog_initialize(char *title, char *description) {
-  node_type_alert_dialog_data_t *data =
-      malloc(sizeof(node_type_alert_dialog_data_t));
-
-  node_t *dialog = node_initialize(node_type_alert_dialog, data);
-  data->description = description;
-  data->rendered = NULL;
-  data->title = title;
-
-  return dialog;
 }
 
 node_t *node_type_text_initialize(char *text, bool selectable) {
