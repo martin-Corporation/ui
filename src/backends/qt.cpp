@@ -148,13 +148,19 @@ static void node_render(node_t *node, QQuickItem *parent,
     }
     case node_type_text: {
       auto data = (node_type_text_data_t *)node->data;
-      auto text =
-          qobject_cast<QQuickItem *>(create_object(engine, "QtQuick", "Text"));
+      auto text = qobject_cast<QQuickItem *>(create_object(
+          engine, "QtQuick", data->selectable ? "TextEdit" : "Text"));
 
-      data->rendered = text;
+      if (data->selectable) {
+        text->setProperty("selectByKeyboard", true);
+        text->setProperty("selectByMouse", true);
+        text->setProperty("readOnly", true);
+      }
+
       text->setProperty("color", QGuiApplication::palette().windowText());
       text->setProperty("text", QString::fromUtf8(data->text));
       text->setParentItem(parent);
+      data->rendered = text;
 
       break;
     }

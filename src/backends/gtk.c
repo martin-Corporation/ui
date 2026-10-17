@@ -8,6 +8,7 @@ static GtkWidget *node_render(node_t *node) {
     case node_type_text: {
       node_type_text_data_t *data = node->data;
       GtkWidget *label = gtk_label_new(data->text);
+      gtk_label_set_selectable(GTK_LABEL(label), data->selectable);
       data->rendered = label;
 
       return label;

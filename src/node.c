@@ -6,7 +6,7 @@ node_t *node_type_button_initialize(char *label,
                                     node_type_button_clicked_t clicked) {
   node_type_button_data_t *data = malloc(sizeof(node_type_button_data_t));
   node_t *button = node_initialize(node_type_button, data);
-  node_t *text = node_type_text_initialize(label);
+  node_t *text = node_type_text_initialize(label, false);
   data->variant = variant;
   data->clicked = clicked;
   list_append(button->children, text);
@@ -25,6 +25,16 @@ node_t *node_type_box_initialize(node_type_box_orientation_type_t orientation,
   return box;
 }
 
+node_t *node_type_window_initialize(char *id, size_t width, size_t height) {
+  node_type_window_data_t *data = malloc(sizeof(node_type_window_data_t));
+  node_t *window = node_initialize(node_type_window, data);
+  data->height = height;
+  data->width = width;
+  data->id = id;
+
+  return window;
+}
+
 node_t *node_type_alert_dialog_initialize(char *title, char *description) {
   node_type_alert_dialog_data_t *data =
       malloc(sizeof(node_type_alert_dialog_data_t));
@@ -37,14 +47,14 @@ node_t *node_type_alert_dialog_initialize(char *title, char *description) {
   return dialog;
 }
 
-node_t *node_type_window_initialize(char *id, size_t width, size_t height) {
-  node_type_window_data_t *data = malloc(sizeof(node_type_window_data_t));
-  node_t *window = node_initialize(node_type_window, data);
-  data->height = height;
-  data->width = width;
-  data->id = id;
+node_t *node_type_text_initialize(char *text, bool selectable) {
+  node_type_text_data_t *data = malloc(sizeof(node_type_text_data_t));
+  node_t *node = node_initialize(node_type_text, data);
+  data->selectable = selectable;
+  data->rendered = NULL;
+  data->text = text;
 
-  return window;
+  return node;
 }
 
 node_t *node_initialize(node_type_t type, void *data) {
@@ -52,15 +62,6 @@ node_t *node_initialize(node_type_t type, void *data) {
   node->type = type;
   node->data = data;
   node->children = list_initialize(1, sizeof(node_t *));
-
-  return node;
-}
-
-node_t *node_type_text_initialize(char *text) {
-  node_type_text_data_t *data = malloc(sizeof(node_type_text_data_t));
-  node_t *node = node_initialize(node_type_text, data);
-  data->rendered = NULL;
-  data->text = text;
 
   return node;
 }

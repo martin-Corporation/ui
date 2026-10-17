@@ -133,6 +133,7 @@ static NSView *node_render(node_t *node) {
       node_type_text_data_t *data = node->data;
       NSString *string = [NSString stringWithUTF8String:data->text];
       NSTextField *field = [NSTextField labelWithString:string];
+      field.selectable = data->selectable;
       data->rendered = field;
 
       return field;
@@ -209,7 +210,6 @@ int node_type_window_run(node_t *node, int argc, char **argv) {
   }
 
   [window makeKeyAndOrderFront:nil];
-  [app activateIgnoringOtherApps:YES];
   [app run];
 
   return 0;

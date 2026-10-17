@@ -49,6 +49,7 @@ typedef struct node_type_button_data {
 typedef struct node_type_text_data {
   char *text;
   void *rendered;
+  bool selectable;
 } node_type_text_data_t;
 
 typedef struct node {
@@ -65,13 +66,13 @@ node_t *node_type_button_initialize(char *label,
                                     node_type_button_clicked_t clicked);
 node_t *node_type_box_initialize(node_type_box_orientation_type_t orientation,
                                  bool padded, bool spaced);
-node_t *node_type_alert_dialog_initialize(char *title, char *description);
 node_t *node_type_window_initialize(char *id, size_t width, size_t height);
+node_t *node_type_alert_dialog_initialize(char *title, char *description);
+node_t *node_type_text_initialize(char *text, bool selectable);
 int node_type_window_run(node_t *node, int argc, char **argv);
 node_t *node_initialize(node_type_t type, void *data);
 void node_type_text_update(node_t *node, char *text);
 void node_type_alert_dialog_show(node_t *node);
-node_t *node_type_text_initialize(char *text);
 void node_destroy(node_t *node);
 #if defined(__cplusplus)
 }
