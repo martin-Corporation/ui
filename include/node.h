@@ -65,15 +65,15 @@ extern "C" {
 Node *node_type_button_initialize(char *label,
                                   NodeTypeButtonVariantType variant,
                                   NodeEventHandler clicked);
-Node *node_type_box_initialize(NodeTypeBoxOrientationType orientation,
-                               bool padded, bool spaced);
 Node *node_type_alert_dialog_initialize(char *title, char *description,
                                         NodeEventHandler handler);
+Node *node_type_box_initialize(NodeTypeBoxOrientationType orientation,
+                               bool padded, bool spaced);
 Node *node_type_window_initialize(char *id, size_t width, size_t height);
 Node *node_type_text_initialize(char *text, bool selectable);
 int node_type_window_run(Node *node, int argc, char **argv);
-Node *node_initialize(NodeType type, void *data);
 void node_type_text_update(Node *node, char *text);
+Node *node_initialize(NodeType type, void *data);
 void node_type_alert_dialog_show(Node *node);
 void node_destroy(Node *node);
 #if defined(__cplusplus)

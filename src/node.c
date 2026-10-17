@@ -14,17 +14,6 @@ Node *node_type_button_initialize(char *label,
   return button;
 }
 
-Node *node_type_box_initialize(NodeTypeBoxOrientationType orientation,
-                               bool padded, bool spaced) {
-  NodeTypeBoxData *data = malloc(sizeof(NodeTypeBoxData));
-  Node *box = node_initialize(NodeTypeBox, data);
-  data->orientation = orientation;
-  data->spaced = spaced;
-  data->padded = padded;
-
-  return box;
-}
-
 Node *node_type_alert_dialog_initialize(char *title, char *description,
                                         NodeEventHandler handler) {
   NodeTypeAlertDialogData *data = malloc(sizeof(NodeTypeAlertDialogData));
@@ -35,6 +24,17 @@ Node *node_type_alert_dialog_initialize(char *title, char *description,
   data->title = title;
 
   return dialog;
+}
+
+Node *node_type_box_initialize(NodeTypeBoxOrientationType orientation,
+                               bool padded, bool spaced) {
+  NodeTypeBoxData *data = malloc(sizeof(NodeTypeBoxData));
+  Node *box = node_initialize(NodeTypeBox, data);
+  data->orientation = orientation;
+  data->spaced = spaced;
+  data->padded = padded;
+
+  return box;
 }
 
 Node *node_type_window_initialize(char *id, size_t width, size_t height) {
