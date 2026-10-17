@@ -52,7 +52,8 @@ static NSView *node_render(node_t *node) {
       break;
     }
     case node_type_box: {
-      NSStackView *stack = [NSStackView stackViewWithViews:@[]];
+      NSStackView *stack = [NSStackView.alloc initWithFrame:NSZeroRect];
+      stack.translatesAutoresizingMaskIntoConstraints = NO;
       node_type_box_data_t *data = node->data;
       stack.spacing = data->spaced ? 8 : 0;
       stack.orientation =
