@@ -2,6 +2,8 @@
 #include <node.h>
 #import <objc/runtime.h>
 
+static NSWindow *window;
+
 @interface node_event_listener_t : NSObject
 @property(nonatomic, assign) node_t *node;
 @end
@@ -143,7 +145,7 @@ static NSView *node_render(node_t *node) {
 void node_type_alert_dialog_show(node_t *node) {
   node_type_alert_dialog_data_t *data = node->data;
   NSAlert *alert = data->rendered;
-  [alert runModal];
+  [alert beginSheetModalForWindow:window completionHandler:nil];
 }
 
 void node_type_text_update(node_t *node, char *text) {
@@ -178,7 +180,7 @@ int node_type_window_run(node_t *node, int argc, char **argv) {
   app.activationPolicy = NSApplicationActivationPolicyRegular;
 
   node_type_window_data_t *data = node->data;
-  NSWindow *window = [[NSWindow alloc]
+  window = [NSWindow.alloc
       initWithContentRect:NSMakeRect(0, 0, data->width, data->height)
                 styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
                            NSWindowStyleMaskMiniaturizable |
@@ -186,8 +188,8 @@ int node_type_window_run(node_t *node, int argc, char **argv) {
                   backing:NSBackingStoreBuffered
                     defer:NO];
 
-  window.title = name;
   [window center];
+  window.title = name;
   NSView *root = window.contentView;
   list_t *children = node->children;
 
