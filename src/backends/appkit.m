@@ -4,17 +4,17 @@
 
 static NSWindow *window;
 
-@interface node_type_button_event_handler_t : NSObject
-@property(nonatomic, assign) node_t *node;
+@interface NodeTypeButtonEventHandler : NSObject
+@property(nonatomic, assign) Node *node;
 @end
-@implementation node_type_button_event_handler_t
+@implementation NodeTypeButtonEventHandler
 
 - (void)handleEvent:(id)sender {
   (void)sender;
 
   if (self.node) {
-    node_t *node = self.node;
-    node_type_button_data_t *data = node->data;
+    Node *node = self.node;
+    NodeTypeButtonData *data = node->data;
 
     if (data->clicked) {
       data->clicked();
@@ -24,9 +24,8 @@ static NSWindow *window;
 
 @end
 
-static void node_type_button_connect_event(NSButton *button, node_t *node) {
-  node_type_button_event_handler_t *listener =
-      node_type_button_event_handler_t.new;
+static void node_type_button_connect_event(NSButton *button, Node *node) {
+  NodeTypeButtonEventHandler *listener = NodeTypeButtonEventHandler.new;
 
   listener.node = node;
   button.target = listener;
@@ -35,13 +34,13 @@ static void node_type_button_connect_event(NSButton *button, node_t *node) {
                            OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-static NSView *node_render(node_t *node) {
+static NSView *node_render(Node *node) {
   switch (node->type) {
-    case node_type_window: {
+    case NodeTypeWindow: {
       break;
     }
-    case node_type_alert_dialog: {
-      node_type_alert_dialog_data_t *data = node->data;
+    case NodeTypeAlertDialog: {
+      NodeTypeAlertDialogData *data = node->data;
       NSAlert *alert = NSAlert.new;
       data->rendered = alert;
       alert.messageText = [NSString stringWithUTF8String:data->title];
@@ -53,17 +52,17 @@ static NSView *node_render(node_t *node) {
 
       break;
     }
-    case node_type_box: {
+    case NodeTypeBox: {
       NSStackView *stack = [NSStackView.alloc initWithFrame:NSZeroRect];
       stack.translatesAutoresizingMaskIntoConstraints = NO;
-      node_type_box_data_t *data = node->data;
+      NodeTypeBoxData *data = node->data;
       stack.spacing = data->spaced ? 8 : 0;
       stack.orientation =
-          data->orientation == node_type_box_orientation_type_horizontal
+          data->orientation == NodeTypeBoxOrientationTypeHorizontal
               ? NSUserInterfaceLayoutOrientationHorizontal
               : NSUserInterfaceLayoutOrientationVertical;
 
-      if (data->orientation == node_type_box_orientation_type_vertical) {
+      if (data->orientation == NodeTypeBoxOrientationTypeVertical) {
         stack.alignment = NSLayoutAttributeLeading;
       }
 
@@ -71,16 +70,15 @@ static NSView *node_render(node_t *node) {
         stack.edgeInsets = NSEdgeInsetsMake(20, 20, 20, 20);
       }
 
-      list_t *children = node->children;
+      List *children = node->children;
 
       for (size_t i = 0; i < children->size; i++) {
-        node_t *child = children->items[i];
+        Node *child = children->items[i];
         NSView *view = node_render(child);
 
         if (view) {
           [stack addView:view
-               inGravity:data->orientation ==
-                                 node_type_box_orientation_type_vertical
+               inGravity:data->orientation == NodeTypeBoxOrientationTypeVertical
                              ? NSStackViewGravityTop
                              : NSStackViewGravityLeading];
         }
@@ -88,9 +86,9 @@ static NSView *node_render(node_t *node) {
 
       return stack;
     }
-    case node_type_button: {
+    case NodeTypeButton: {
       NSButton *button = [NSButton buttonWithTitle:@"" target:nil action:nil];
-      node_type_button_data_t *data = node->data;
+      NodeTypeButtonData *data = node->data;
 
       if (data->clicked) {
         node_type_button_connect_event(button, node);
@@ -100,15 +98,15 @@ static NSView *node_render(node_t *node) {
         button.bezelStyle = NSBezelStyleGlass;
 
         switch (data->variant) {
-          case node_type_button_variant_type_primary: {
+          case NodeTypeButtonVariantTypePrimary: {
             button.tintProminence = NSTintProminencePrimary;
             break;
           }
-          case node_type_button_variant_type_secondary: {
+          case NodeTypeButtonVariantTypeSecondary: {
             button.tintProminence = NSTintProminenceNone;
             break;
           }
-          case node_type_button_variant_type_destructive: {
+          case NodeTypeButtonVariantTypeDestructive: {
             button.hasDestructiveAction = YES;
             break;
           }
@@ -118,13 +116,13 @@ static NSView *node_render(node_t *node) {
         }
       }
 
-      list_t *children = node->children;
+      List *children = node->children;
 
       for (size_t i = 0; i < children->size; i++) {
-        node_t *child = children->items[i];
+        Node *child = children->items[i];
 
-        if (child->type == node_type_text) {
-          node_type_text_data_t *data = child->data;
+        if (child->type == NodeTypeText) {
+          NodeTypeTextData *data = child->data;
           data->rendered = button;
           button.title = [NSString stringWithUTF8String:data->text];
         }
@@ -132,8 +130,8 @@ static NSView *node_render(node_t *node) {
 
       return button;
     }
-    case node_type_text: {
-      node_type_text_data_t *data = node->data;
+    case NodeTypeText: {
+      NodeTypeTextData *data = node->data;
       NSString *string = [NSString stringWithUTF8String:data->text];
       NSTextField *field = [NSTextField labelWithString:string];
       field.selectable = data->selectable;
@@ -146,8 +144,8 @@ static NSView *node_render(node_t *node) {
   return nil;
 }
 
-void node_type_alert_dialog_show(node_t *node) {
-  node_type_alert_dialog_data_t *data = node->data;
+void node_type_alert_dialog_show(Node *node) {
+  NodeTypeAlertDialogData *data = node->data;
   NSAlert *alert = data->rendered;
   [alert beginSheetModalForWindow:window
                 completionHandler:(data->handler == nil ? nil
@@ -156,8 +154,8 @@ void node_type_alert_dialog_show(node_t *node) {
                                                           })];
 }
 
-void node_type_text_update(node_t *node, char *text) {
-  node_type_text_data_t *data = node->data;
+void node_type_text_update(Node *node, char *text) {
+  NodeTypeTextData *data = node->data;
   data->text = text;
 
   if (data->rendered) {
@@ -174,7 +172,7 @@ void node_type_text_update(node_t *node, char *text) {
   }
 }
 
-int node_type_window_run(node_t *node, int argc, char **argv) {
+int node_type_window_run(Node *node, int argc, char **argv) {
   (void)argc;
   (void)argv;
 
@@ -187,7 +185,7 @@ int node_type_window_run(node_t *node, int argc, char **argv) {
   NSApplication *app = NSApplication.sharedApplication;
   app.activationPolicy = NSApplicationActivationPolicyRegular;
 
-  node_type_window_data_t *data = node->data;
+  NodeTypeWindowData *data = node->data;
   window = [NSWindow.alloc
       initWithContentRect:NSMakeRect(0, 0, data->width, data->height)
                 styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
@@ -199,10 +197,10 @@ int node_type_window_run(node_t *node, int argc, char **argv) {
   [window center];
   window.title = name;
   NSView *root = window.contentView;
-  list_t *children = node->children;
+  List *children = node->children;
 
   for (size_t i = 0; i < children->size; i++) {
-    node_t *child = children->items[i];
+    Node *child = children->items[i];
     NSView *view = node_render(child);
 
     if (view) {

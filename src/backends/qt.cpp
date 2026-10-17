@@ -34,17 +34,17 @@ class NodeEventListener : public QObject {
   Q_OBJECT
 
 public:
-  node_t *node;
+  Node *node;
 
-  explicit NodeEventListener(node_t *node, QObject *parent = nullptr)
+  explicit NodeEventListener(Node *node, QObject *parent = nullptr)
       : QObject(parent), node(node) {}
 
 public slots:
 
   void handle() {
     switch (node->type) {
-      case node_type_button: {
-        auto data = (node_type_button_data_t *)node->data;
+      case NodeTypeButton: {
+        auto data = (NodeTypeButtonData *)node->data;
 
         if (data->clicked != nullptr) {
           data->clicked();
@@ -52,8 +52,8 @@ public slots:
 
         break;
       }
-      case node_type_alert_dialog: {
-        auto data = (node_type_alert_dialog_data_t *)node->data;
+      case NodeTypeAlertDialog: {
+        auto data = (NodeTypeAlertDialogData *)node->data;
 
         if (data->handler != nullptr) {
           data->handler();
@@ -83,12 +83,11 @@ static void bind_implicit_size(QQuickItem *wrapper, QQuickItem *content,
   update();
 }
 
-static void node_render(node_t *node, QQuickItem *parent,
-                        QQuickWindow *window) {
+static void node_render(Node *node, QQuickItem *parent, QQuickWindow *window) {
   switch (node->type) {
-    case node_type_alert_dialog: {
+    case NodeTypeAlertDialog: {
       auto dialog = create_object(engine, "QtQuick.Dialogs", "MessageDialog");
-      auto data = (node_type_alert_dialog_data_t *)node->data;
+      auto data = (NodeTypeAlertDialogData *)node->data;
       dialog->setProperty("parentWindow", QVariant::fromValue(window));
       dialog->setProperty("text", QString::fromUtf8(data->title));
       data->rendered = dialog;
@@ -105,15 +104,15 @@ static void node_render(node_t *node, QQuickItem *parent,
 
       break;
     }
-    case node_type_box: {
+    case NodeTypeBox: {
       auto wrapper =
           qobject_cast<QQuickItem *>(create_object(engine, "QtQuick", "Item"));
 
-      auto data = (node_type_box_data_t *)node->data;
+      auto data = (NodeTypeBoxData *)node->data;
       int padding = data->padded ? 8 : 0;
       auto box = qobject_cast<QQuickItem *>(create_object(
           engine, "QtQuick.Layouts",
-          (data->orientation == node_type_box_orientation_type_horizontal)
+          (data->orientation == NodeTypeBoxOrientationTypeHorizontal)
               ? "RowLayout"
               : "ColumnLayout"));
 
@@ -128,7 +127,7 @@ static void node_render(node_t *node, QQuickItem *parent,
       auto children = node->children;
 
       for (size_t i = 0; i < children->size; i++) {
-        auto child = (node_t *)children->items[i];
+        auto child = (Node *)children->items[i];
         node_render(child, box, window);
       }
 
@@ -137,11 +136,11 @@ static void node_render(node_t *node, QQuickItem *parent,
 
       break;
     }
-    case node_type_button: {
+    case NodeTypeButton: {
       auto button = qobject_cast<QQuickItem *>(
           create_object(engine, "QtQuick.Controls", "Button"));
 
-      auto data = (node_type_button_data_t *)node->data;
+      auto data = (NodeTypeButtonData *)node->data;
       button->setParentItem(parent);
 
       if (data->clicked) {
@@ -149,17 +148,17 @@ static void node_render(node_t *node, QQuickItem *parent,
         QObject::connect(button, SIGNAL(clicked()), listener, SLOT(handle()));
       }
 
-      if (data->variant == node_type_button_variant_type_primary) {
+      if (data->variant == NodeTypeButtonVariantTypePrimary) {
         button->setProperty("highlighted", true);
       }
 
       auto children = node->children;
 
       for (size_t i = 0; i < children->size; i++) {
-        auto child = (node_t *)children->items[i];
+        auto child = (Node *)children->items[i];
 
-        if (child->type == node_type_text) {
-          auto data = (node_type_text_data_t *)child->data;
+        if (child->type == NodeTypeText) {
+          auto data = (NodeTypeTextData *)child->data;
           data->rendered = button;
           button->setProperty("text", QString::fromUtf8(data->text));
         } else {
@@ -169,8 +168,8 @@ static void node_render(node_t *node, QQuickItem *parent,
 
       break;
     }
-    case node_type_text: {
-      auto data = (node_type_text_data_t *)node->data;
+    case NodeTypeText: {
+      auto data = (NodeTypeTextData *)node->data;
       auto text = qobject_cast<QQuickItem *>(create_object(
           engine, "QtQuick", data->selectable ? "TextEdit" : "Text"));
 
@@ -193,14 +192,14 @@ static void node_render(node_t *node, QQuickItem *parent,
   }
 }
 
-extern "C" void node_type_alert_dialog_show(node_t *node) {
-  auto data = (node_type_alert_dialog_data_t *)node->data;
+extern "C" void node_type_alert_dialog_show(Node *node) {
+  auto data = (NodeTypeAlertDialogData *)node->data;
   auto dialog = (QObject *)data->rendered;
   QMetaObject::invokeMethod(dialog, "open");
 }
 
-extern "C" void node_type_text_update(node_t *node, char *text) {
-  auto data = (node_type_text_data_t *)node->data;
+extern "C" void node_type_text_update(Node *node, char *text) {
+  auto data = (NodeTypeTextData *)node->data;
   data->text = text;
 
   if (data->rendered) {
@@ -209,8 +208,8 @@ extern "C" void node_type_text_update(node_t *node, char *text) {
   }
 }
 
-extern "C" int node_type_window_run(node_t *node, int argc, char **argv) {
-  auto data = (node_type_window_data_t *)node->data;
+extern "C" int node_type_window_run(Node *node, int argc, char **argv) {
+  auto data = (NodeTypeWindowData *)node->data;
   QGuiApplication app(argc, argv);
   QQuickWindow window;
   QQmlEngine _engine;
@@ -224,7 +223,7 @@ extern "C" int node_type_window_run(node_t *node, int argc, char **argv) {
   auto children = node->children;
 
   for (size_t i = 0; i < children->size; i++) {
-    auto child = (node_t *)children->items[i];
+    auto child = (Node *)children->items[i];
     node_render(child, window.contentItem(), &window);
   }
 

@@ -3,18 +3,18 @@
 
 static GtkWidget *window;
 
-static GtkWidget *node_render(node_t *node) {
+static GtkWidget *node_render(Node *node) {
   switch (node->type) {
-    case node_type_text: {
-      node_type_text_data_t *data = node->data;
+    case NodeTypeText: {
+      NodeTypeTextData *data = node->data;
       GtkWidget *label = gtk_label_new(data->text);
       gtk_label_set_selectable(GTK_LABEL(label), data->selectable);
       data->rendered = label;
 
       return label;
     }
-    case node_type_alert_dialog: {
-      node_type_alert_dialog_data_t *data = node->data;
+    case NodeTypeAlertDialog: {
+      NodeTypeAlertDialogData *data = node->data;
       GtkAlertDialog *dialog = gtk_alert_dialog_new("%s", data->title);
       data->rendered = dialog;
 
@@ -24,15 +24,14 @@ static GtkWidget *node_render(node_t *node) {
 
       break;
     }
-    case node_type_box: {
-      node_type_box_data_t *data = node->data;
+    case NodeTypeBox: {
+      NodeTypeBoxData *data = node->data;
       size_t padding = data->padded ? 12 : 0;
       GtkWidget *box = gtk_box_new(
           (GtkOrientation)data->orientation,
           data->spaced
-              ? (data->orientation == node_type_box_orientation_type_horizontal
-                     ? 6
-                     : 12)
+              ? (data->orientation == NodeTypeBoxOrientationTypeHorizontal ? 6
+                                                                           : 12)
               : 0);
 
       gtk_widget_set_margin_start(box, padding);
@@ -40,10 +39,10 @@ static GtkWidget *node_render(node_t *node) {
       gtk_widget_set_margin_top(box, padding);
       gtk_widget_set_margin_bottom(box, padding);
 
-      list_t *children = node->children;
+      List *children = node->children;
 
       for (size_t i = 0; i < children->size; i++) {
-        node_t *child = children->items[i];
+        Node *child = children->items[i];
         GtkWidget *widget = node_render(child);
 
         if (widget) {
@@ -53,8 +52,8 @@ static GtkWidget *node_render(node_t *node) {
 
       return box;
     }
-    case node_type_button: {
-      node_type_button_data_t *data = node->data;
+    case NodeTypeButton: {
+      NodeTypeButtonData *data = node->data;
       GtkWidget *button = gtk_button_new();
 
       if (data->clicked) {
@@ -62,11 +61,11 @@ static GtkWidget *node_render(node_t *node) {
       }
 
       switch (data->variant) {
-        case node_type_button_variant_type_primary: {
+        case NodeTypeButtonVariantTypePrimary: {
           gtk_widget_add_css_class(button, "suggested-action");
           break;
         }
-        case node_type_button_variant_type_destructive: {
+        case NodeTypeButtonVariantTypeDestructive: {
           gtk_widget_add_css_class(button, "destructive-action");
           break;
         }
@@ -75,10 +74,10 @@ static GtkWidget *node_render(node_t *node) {
         }
       }
 
-      list_t *children = node->children;
+      List *children = node->children;
 
       for (size_t i = 0; i < children->size; i++) {
-        node_t *child = children->items[i];
+        Node *child = children->items[i];
         GtkWidget *widget = node_render(child);
 
         if (widget) {
@@ -96,21 +95,21 @@ static GtkWidget *node_render(node_t *node) {
   return NULL;
 }
 
-typedef enum color_scheme {
-  color_scheme_default,
-  color_scheme_prefer_dark,
-  color_scheme_prefer_light
-} color_scheme_t;
+typedef enum ColorScheme {
+  ColorSchemeDefault,
+  ColorSchemePreferDark,
+  ColorSchemePreferLight
+} ColorScheme;
 
 static void set_color_scheme(GtkSettings *settings, GVariant *variant) {
-  color_scheme_t color_scheme = g_variant_get_uint32(variant);
+  ColorScheme color_scheme = g_variant_get_uint32(variant);
 
-  if (color_scheme > color_scheme_prefer_light) {
-    color_scheme = color_scheme_default;
+  if (color_scheme > ColorSchemePreferLight) {
+    color_scheme = ColorSchemeDefault;
   }
 
   g_object_set(settings, "gtk-application-prefer-dark-theme",
-               color_scheme == color_scheme_prefer_dark, NULL);
+               color_scheme == ColorSchemePreferDark, NULL);
 }
 
 static void settings_portal_changed_cb(GDBusProxy *proxy,
@@ -194,8 +193,8 @@ static void activate(GtkApplication *app, gpointer user_data) {
   const char *desktop = g_getenv("XDG_CURRENT_DESKTOP");
   GtkSettings *settings = gtk_settings_get_default();
   window = gtk_application_window_new(app);
-  node_t *node = user_data;
-  node_type_window_data_t *data = node->data;
+  Node *node = user_data;
+  NodeTypeWindowData *data = node->data;
 
   if (!(desktop && strstr(desktop, "GNOME"))) {
     init_portal(settings);
@@ -203,10 +202,10 @@ static void activate(GtkApplication *app, gpointer user_data) {
 
   gtk_window_set_default_size(GTK_WINDOW(window), data->width, data->height);
 
-  list_t *children = node->children;
+  List *children = node->children;
 
   for (size_t i = 0; i < children->size; i++) {
-    node_t *child = children->items[i];
+    Node *child = children->items[i];
     GtkWidget *widget = node_render(child);
 
     if (widget) {
@@ -220,7 +219,7 @@ static void activate(GtkApplication *app, gpointer user_data) {
 static void node_type_alert_dialog_handle_event(GObject *source,
                                                 GAsyncResult *result,
                                                 gpointer user_data) {
-  node_type_alert_dialog_data_t *data = user_data;
+  NodeTypeAlertDialogData *data = user_data;
   gtk_alert_dialog_choose_finish(GTK_ALERT_DIALOG(source), result, NULL);
 
   if (data->handler != NULL) {
@@ -228,16 +227,16 @@ static void node_type_alert_dialog_handle_event(GObject *source,
   }
 }
 
-void node_type_alert_dialog_show(node_t *node) {
-  node_type_alert_dialog_data_t *data = node->data;
+void node_type_alert_dialog_show(Node *node) {
+  NodeTypeAlertDialogData *data = node->data;
   GtkAlertDialog *dialog = data->rendered;
   gtk_alert_dialog_choose(
       dialog, GTK_WINDOW(window), NULL,
       data->handler != NULL ? node_type_alert_dialog_handle_event : NULL, data);
 }
 
-void node_type_text_update(node_t *node, char *text) {
-  node_type_text_data_t *data = node->data;
+void node_type_text_update(Node *node, char *text) {
+  NodeTypeTextData *data = node->data;
   data->text = text;
 
   if (data->rendered) {
@@ -246,9 +245,9 @@ void node_type_text_update(node_t *node, char *text) {
   }
 }
 
-int node_type_window_run(node_t *node, int argc, char **argv) {
+int node_type_window_run(Node *node, int argc, char **argv) {
   const char *desktop = g_getenv("XDG_CURRENT_DESKTOP");
-  node_type_window_data_t *data = node->data;
+  NodeTypeWindowData *data = node->data;
   int status;
   void *app;
 

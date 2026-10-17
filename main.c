@@ -1,7 +1,7 @@
 #include <node.h>
 
-node_t *dialog;
-node_t *label;
+Node *dialog;
+Node *label;
 
 void clicked(void) {
   node_type_text_update(label, "Hi!");
@@ -9,16 +9,16 @@ void clicked(void) {
 }
 
 int main(int argc, char **argv) {
-  node_t *window = node_type_window_initialize("com.mrtn.demo", 500, 250);
+  Node *window = node_type_window_initialize("com.mrtn.demo", 500, 250);
   dialog = node_type_alert_dialog_initialize(
       "Hello, World!", "This is an example alert dialog.", NULL);
 
-  node_t *box = node_type_box_initialize(
-      node_type_box_orientation_type_vertical, true, true);
+  Node *box =
+      node_type_box_initialize(NodeTypeBoxOrientationTypeVertical, true, true);
 
-  node_t *text = node_type_text_initialize("Welcome to martinUI!", true);
-  node_t *button = node_type_button_initialize(
-      "Button", node_type_button_variant_type_primary, clicked);
+  Node *text = node_type_text_initialize("Welcome to martinUI!", true);
+  Node *button = node_type_button_initialize(
+      "Button", NodeTypeButtonVariantTypePrimary, clicked);
 
   label = button->children->items[0];
   list_append(window->children, dialog);

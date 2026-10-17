@@ -2,80 +2,80 @@
 #include <list.h>
 #include <stdbool.h>
 
-typedef enum node_type {
-  node_type_window,
-  node_type_alert_dialog,
-  node_type_box,
-  node_type_button,
-  node_type_text
-} node_type_t;
+typedef enum NodeType {
+  NodeTypeWindow,
+  NodeTypeAlertDialog,
+  NodeTypeBox,
+  NodeTypeButton,
+  NodeTypeText
+} NodeType;
 
-typedef struct node_type_window_data {
+typedef struct NodeTypeWindowData {
   char *id;
   size_t width;
   size_t height;
-} node_type_window_data_t;
+} NodeTypeWindowData;
 
-typedef void (*node_event_handler_t)(void);
+typedef void (*NodeEventHandler)(void);
 
-typedef struct node_type_alert_dialog_data {
+typedef struct NodeTypeAlertDialogData {
   char *title;
   char *description;
   void *rendered;
-  node_event_handler_t handler;
-} node_type_alert_dialog_data_t;
+  NodeEventHandler handler;
+} NodeTypeAlertDialogData;
 
-typedef enum node_type_box_orientation_type {
-  node_type_box_orientation_type_horizontal,
-  node_type_box_orientation_type_vertical
-} node_type_box_orientation_type_t;
+typedef enum NodeTypeBoxOrientationType {
+  NodeTypeBoxOrientationTypeHorizontal,
+  NodeTypeBoxOrientationTypeVertical
+} NodeTypeBoxOrientationType;
 
-typedef struct node_type_box_data {
+typedef struct NodeTypeBoxData {
   bool padded;
   bool spaced;
-  node_type_box_orientation_type_t orientation;
-} node_type_box_data_t;
+  NodeTypeBoxOrientationType orientation;
+} NodeTypeBoxData;
 
-typedef enum node_type_button_variant_type {
-  node_type_button_variant_type_primary,
-  node_type_button_variant_type_secondary,
-  node_type_button_variant_type_destructive
-} node_type_button_variant_type_t;
+typedef enum NodeTypeButtonVariantType {
+  NodeTypeButtonVariantTypePrimary,
+  NodeTypeButtonVariantTypeSecondary,
+  NodeTypeButtonVariantTypeDestructive
+} NodeTypeButtonVariantType;
 
-typedef struct node_type_button_data {
-  node_event_handler_t clicked;
-  node_type_button_variant_type_t variant;
-} node_type_button_data_t;
+typedef struct NodeTypeButtonData {
+  NodeEventHandler clicked;
+  NodeTypeButtonVariantType variant;
+} NodeTypeButtonData;
 
-typedef struct node_type_text_data {
+typedef struct NodeTypeTextData {
   char *text;
   void *rendered;
   bool selectable;
-} node_type_text_data_t;
+} NodeTypeTextData;
 
-typedef struct node {
-  node_type_t type;
+typedef struct Node {
+  NodeType type;
   void *data;
-  list_t *children;
-} node_t;
+  List *children;
+} Node;
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
-node_t *node_type_button_initialize(char *label,
-                                    node_type_button_variant_type_t variant,
-                                    node_event_handler_t clicked);
-node_t *node_type_box_initialize(node_type_box_orientation_type_t orientation,
-                                 bool padded, bool spaced);
-node_t *node_type_alert_dialog_initialize(char *title, char *description,
-                                          node_event_handler_t handler);
-node_t *node_type_window_initialize(char *id, size_t width, size_t height);
-node_t *node_type_text_initialize(char *text, bool selectable);
-int node_type_window_run(node_t *node, int argc, char **argv);
-node_t *node_initialize(node_type_t type, void *data);
-void node_type_text_update(node_t *node, char *text);
-void node_type_alert_dialog_show(node_t *node);
-void node_destroy(node_t *node);
+Node *node_type_button_initialize(char *label,
+                                  NodeTypeButtonVariantType variant,
+                                  NodeEventHandler clicked);
+Node *node_type_box_initialize(NodeTypeBoxOrientationType orientation,
+                               bool padded, bool spaced);
+Node *node_type_alert_dialog_initialize(char *title, char *description,
+                                        NodeEventHandler handler);
+Node *node_type_window_initialize(char *id, size_t width, size_t height);
+Node *node_type_text_initialize(char *text, bool selectable);
+int node_type_window_run(Node *node, int argc, char **argv);
+Node *node_initialize(NodeType type, void *data);
+void node_type_text_update(Node *node, char *text);
+void node_type_alert_dialog_show(Node *node);
+void node_destroy(Node *node);
 #if defined(__cplusplus)
 }
 #endif

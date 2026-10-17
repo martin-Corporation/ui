@@ -1,18 +1,18 @@
 #pragma once
 #include <stddef.h>
 
-typedef struct list {
+typedef struct List {
   void **items;
   size_t size;
   size_t capacity;
   size_t item_size;
-} list_t;
+} List;
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
-list_t *list_initialize(size_t capacity, size_t item_size);
-void list_append(list_t *list, void *item);
+List *list_initialize(size_t capacity, size_t item_size);
+void list_append(List *list, void *item);
 #if defined(__cplusplus)
 }
 #endif

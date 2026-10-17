@@ -1,12 +1,12 @@
 #include <node.h>
 #include <stdlib.h>
 
-node_t *node_type_button_initialize(char *label,
-                                    node_type_button_variant_type_t variant,
-                                    node_event_handler_t clicked) {
-  node_type_button_data_t *data = malloc(sizeof(node_type_button_data_t));
-  node_t *button = node_initialize(node_type_button, data);
-  node_t *text = node_type_text_initialize(label, false);
+Node *node_type_button_initialize(char *label,
+                                  NodeTypeButtonVariantType variant,
+                                  NodeEventHandler clicked) {
+  NodeTypeButtonData *data = malloc(sizeof(NodeTypeButtonData));
+  Node *button = node_initialize(NodeTypeButton, data);
+  Node *text = node_type_text_initialize(label, false);
   data->variant = variant;
   data->clicked = clicked;
   list_append(button->children, text);
@@ -14,10 +14,10 @@ node_t *node_type_button_initialize(char *label,
   return button;
 }
 
-node_t *node_type_box_initialize(node_type_box_orientation_type_t orientation,
-                                 bool padded, bool spaced) {
-  node_type_box_data_t *data = malloc(sizeof(node_type_box_data_t));
-  node_t *box = node_initialize(node_type_box, data);
+Node *node_type_box_initialize(NodeTypeBoxOrientationType orientation,
+                               bool padded, bool spaced) {
+  NodeTypeBoxData *data = malloc(sizeof(NodeTypeBoxData));
+  Node *box = node_initialize(NodeTypeBox, data);
   data->orientation = orientation;
   data->spaced = spaced;
   data->padded = padded;
@@ -25,12 +25,10 @@ node_t *node_type_box_initialize(node_type_box_orientation_type_t orientation,
   return box;
 }
 
-node_t *node_type_alert_dialog_initialize(char *title, char *description,
-                                          node_event_handler_t handler) {
-  node_type_alert_dialog_data_t *data =
-      malloc(sizeof(node_type_alert_dialog_data_t));
-
-  node_t *dialog = node_initialize(node_type_alert_dialog, data);
+Node *node_type_alert_dialog_initialize(char *title, char *description,
+                                        NodeEventHandler handler) {
+  NodeTypeAlertDialogData *data = malloc(sizeof(NodeTypeAlertDialogData));
+  Node *dialog = node_initialize(NodeTypeAlertDialog, data);
   data->description = description;
   data->handler = handler;
   data->rendered = NULL;
@@ -39,9 +37,9 @@ node_t *node_type_alert_dialog_initialize(char *title, char *description,
   return dialog;
 }
 
-node_t *node_type_window_initialize(char *id, size_t width, size_t height) {
-  node_type_window_data_t *data = malloc(sizeof(node_type_window_data_t));
-  node_t *window = node_initialize(node_type_window, data);
+Node *node_type_window_initialize(char *id, size_t width, size_t height) {
+  NodeTypeWindowData *data = malloc(sizeof(NodeTypeWindowData));
+  Node *window = node_initialize(NodeTypeWindow, data);
   data->height = height;
   data->width = width;
   data->id = id;
@@ -49,9 +47,9 @@ node_t *node_type_window_initialize(char *id, size_t width, size_t height) {
   return window;
 }
 
-node_t *node_type_text_initialize(char *text, bool selectable) {
-  node_type_text_data_t *data = malloc(sizeof(node_type_text_data_t));
-  node_t *node = node_initialize(node_type_text, data);
+Node *node_type_text_initialize(char *text, bool selectable) {
+  NodeTypeTextData *data = malloc(sizeof(NodeTypeTextData));
+  Node *node = node_initialize(NodeTypeText, data);
   data->selectable = selectable;
   data->rendered = NULL;
   data->text = text;
@@ -59,24 +57,24 @@ node_t *node_type_text_initialize(char *text, bool selectable) {
   return node;
 }
 
-node_t *node_initialize(node_type_t type, void *data) {
-  node_t *node = malloc(sizeof(node_t));
+Node *node_initialize(NodeType type, void *data) {
+  Node *node = malloc(sizeof(Node));
   node->type = type;
   node->data = data;
-  node->children = list_initialize(1, sizeof(node_t *));
+  node->children = list_initialize(1, sizeof(Node *));
 
   return node;
 }
 
-void node_destroy(node_t *node) {
+void node_destroy(Node *node) {
   for (size_t i = 0; i < node->children->size; i++) {
-    node_t *child = node->children->items[i];
+    Node *child = node->children->items[i];
     node_destroy(child);
   }
 
-  if (node->type == node_type_window || node->type == node_type_alert_dialog ||
-      node->type == node_type_box || node->type == node_type_button ||
-      node->type == node_type_text) {
+  if (node->type == NodeTypeWindow || node->type == NodeTypeAlertDialog ||
+      node->type == NodeTypeBox || node->type == NodeTypeButton ||
+      node->type == NodeTypeText) {
     free(node->data);
   }
 
